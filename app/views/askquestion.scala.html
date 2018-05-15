@@ -1,0 +1,42 @@
+@(questionForm: Form[AskQuestionForm])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+
+@import helper._
+
+@main("Login | Ask my opinion") {
+    <section>
+        <div align="center">
+            <!--
+            <form>
+                <fieldset>
+                    <legend>Login to Ask my opinion</legend>
+                    <input placeholder="Email" name="email" />
+                    <br />
+                    <input placeholder="Password" name="password" />
+                    <br />
+                    <input type="submit" />
+                </fieldset>
+            </form>-->
+            @if(questionForm.hasGlobalErrors) {
+                <ul>
+                @for(error <- questionForm.globalErrors) {
+                    <li>@error.format</li>
+                }
+                </ul>
+            }
+            @helper.form(action = routes.QuestionController.ask) {
+                @CSRF.formField
+                <div class="inputContainer" align="left">
+                    @helper.inputText(questionForm("name"))
+                </div>
+                <div class="inputContainer" align="left">
+                    @helper.inputText(questionForm("email"))
+                </div>
+                <div class="inputContainer" align="left">
+                    @helper.textarea(questionForm("question"))
+                </div>
+                <input type="submit" />
+            }
+
+        </div>
+    </section>
+}

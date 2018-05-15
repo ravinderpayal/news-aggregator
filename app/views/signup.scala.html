@@ -1,0 +1,40 @@
+@(signupForm: Form[UserSignupForm],genderOptions: List[(String, String)] = List("Male" -> "Male", "Female" -> "Female", "Others" -> "Others"))(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+
+@import helper._
+
+@main("Signup | Ask my opinion") {
+    <section>
+        <div align="center">
+            <!--
+            <form>
+                <fieldset>
+                    <legend>Login to Ask my opinion</legend>
+                    <input placeholder="Email" name="email" />
+                    <br />
+                    <input placeholder="Password" name="password" />
+                    <br />
+                    <input type="submit" />
+                </fieldset>
+            </form>-->
+            @if(signupForm.hasGlobalErrors) {
+                <ul>
+                @for(error <- signupForm.globalErrors) {
+                    <li>@error.format</li>
+                }
+                </ul>
+            }
+            @helper.form(action = routes.HomeController.loginPost) {
+                @CSRF.formField
+                @helper.inputText(signupForm("name.firstName"))
+                @helper.inputText(signupForm("name.middleName"))
+                @helper.inputText(signupForm("name.lastName"))
+                @helper.inputText(signupForm("email"))
+                @helper.inputPassword(signupForm("password"))
+                @helper.select(signupForm("gender"), options = genderOptions)
+                @helper.inputDate(signupForm("dob"))
+                <input type="submit" />
+            }
+
+        </div>
+    </section>
+}

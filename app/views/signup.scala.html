@@ -23,7 +23,7 @@
                 }
                 </ul>
             }
-            @helper.form(action = routes.HomeController.loginPost) {
+            @helper.form(action = routes.HomeController.signupPost()) {
                 @CSRF.formField
                 @helper.inputText(signupForm("name.firstName"))
                 @helper.inputText(signupForm("name.middleName"))

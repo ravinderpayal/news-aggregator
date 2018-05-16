@@ -1,4 +1,4 @@
-package notification
+package v1.notification
 
 import java.util.{Date, UUID}
 
@@ -43,9 +43,9 @@ trait NotificationRepository {
 class NotificationRepositoryImpl @Inject()()(implicit ec: JobExecutionContext, val reactiveMongoApi: ReactiveMongoApi)
   extends NotificationRepository {
 
-  def notificationCollection: Future[JSONCollection] = reactiveMongoApi.database.map(_.collection[JSONCollection]("notification"))
+  def notificationCollection: Future[JSONCollection] = reactiveMongoApi.database.map(_.collection[JSONCollection]("v1/notification"))
 
-  def notificationCollectionBS: Future[BSONCollection] = reactiveMongoApi.database.map(_.collection[BSONCollection]("notification"))
+  def notificationCollectionBS: Future[BSONCollection] = reactiveMongoApi.database.map(_.collection[BSONCollection]("v1/notification"))
 
   private val logger = Logger(this.getClass)
 

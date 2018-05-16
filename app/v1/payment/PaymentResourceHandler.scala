@@ -1,4 +1,4 @@
-package payment
+package v1.payment
 
 import java.util.{Date, UUID}
 
@@ -8,6 +8,8 @@ import play.api.libs.json._
 import play.api.libs.ws._
 import play.api.mvc.Results._
 import play.api.mvc._
+import utils.ApplicationResult
+import v1.askopinion.AskOpinionResourceHandler
 
 // import v1.job.{JobData, JobRepositoryImpl}
 
@@ -19,9 +21,9 @@ import scala.concurrent.{ExecutionContext, Future}
   */
 class PaymentResourceHandler @Inject()( routerProvider: Provider[PaymentRouter],
                                         paymentRepository: PaymentRepositoryImpl,
-                                        courseRepository: CourseRepositoryImpl,
                                         config: Configuration,
-                                        ws: WSClient
+                                        ws: WSClient,
+                                        askOpinionResourceHandler: AskOpinionResourceHandler
                                       )(implicit ec: ExecutionContext) {
   def get(userId:UUID, paymentId: UUID):Future[Result] = {
     paymentRepository.get(paymentId, userId).map(_ match {
@@ -79,7 +81,7 @@ class PaymentResourceHandler @Inject()( routerProvider: Provider[PaymentRouter],
                 "tax" -> "0"))
               ),
             "description" -> payment.label,
-            "invoice_number" -> payment.paymentId.toString
+            "invoice_number" -> payment.id.toString
           )
         )
       )
@@ -174,12 +176,10 @@ class PaymentResourceHandler @Inject()( routerProvider: Provider[PaymentRouter],
   }
   private def onPaymentSuccess(payment: PaymentData) = {
     payment.successCallBack.productClass match {
-      case "CLASS_ROOM" => {
-        val enrollment = CourseClassRoomEnrollment(UUID.randomUUID, payment.successCallBack.productId, payment.userId, new Date(), payment.paymentId)
-        courseRepository.enrollInClassRoom(enrollment)
-        courseRepository.addUserInClassRoomEnrolledList(payment.successCallBack.productId, payment.userId)
+      case "ASK" => {
+          askOpinionResourceHandler.onPaymentSuccess(payment)
       }
-      case "COURSE_LIVE" => {
+      case "WALLET" => {
         // TODO: Change code
       }
       case _ => {

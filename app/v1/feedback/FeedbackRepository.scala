@@ -1,4 +1,4 @@
-package feedback
+package v1.feedback
 
 import java.util.{Date, UUID}
 
@@ -40,7 +40,7 @@ trait FeedbackRepository {
 class FeedbackRepositoryImpl @Inject()()(implicit ec: FeedbackExecutionContext, val reactiveMongoApi: ReactiveMongoApi)
   extends FeedbackRepository{
 
-  def collection: Future[JSONCollection] = reactiveMongoApi.database.map(_.collection[JSONCollection]("feedback"))
+  def collection: Future[JSONCollection] = reactiveMongoApi.database.map(_.collection[JSONCollection]("v1/feedback"))
 
   private val logger = Logger(this.getClass)
 

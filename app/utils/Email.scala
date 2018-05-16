@@ -1,8 +1,9 @@
 package utils
 
 import javax.inject.{Inject, Singleton}
-import models.UserName
+import models.{AppUser, UserName}
 import play.api.libs.mailer._
+import v1.notification.NotificationData
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -46,11 +47,11 @@ class Email @Inject()(mailerClient: MailerClient, config: Config)(implicit ec: E
                         }
   }
 
-  def sendNotification(user: UserDataStripped, notification: NotificationData) = {
+  def sendNotification(user: AppUser, notification: NotificationData) = {
     val send = Email(
       notification.title,
       "noreply@mandisoft.com",
-      Seq(s"${user.name.firstName} ${user.name.lastName}<${user.email}>"),
+      Seq(s"${user.profile.name.firstName} ${user.profile.name.lastName}<${user.email}>"),
       // adds attachment
       /*
       attachments = Seq(
@@ -63,23 +64,24 @@ class Email @Inject()(mailerClient: MailerClient, config: Config)(implicit ec: E
       // sends text, HTML or both...
       bodyText = Some(notification.text),
       bodyHtml = Some(s"""<html>
-                                          <body>
-                                            <p>
-                                              Hello Dear  ${user.name.firstName} ${user.name.lastName}. You have 1 notification.
-                                              <br />
-                                              <ul>
-                                                <li>
-                                                  ${notification.title}
-                                                  <br />
-                                                  ${notification.text}
-                                                </li>
-                                              </ul>
-                                            </p>
-                                            <footer>
-                                              You received this email from <a href="${config.website}">${config.operatingEntity}</a>, because you have opted-in for notification.
-                                            </footer>
-                                          </body>
-                                        </html>"""))
+                            <body>
+                              <p>
+                                Hello Dear  ${user.profile.name.firstName} ${user.profile.name.lastName}. You have 1 notification.
+                                <br />
+                                <ul>
+                                  <li>
+                                    ${notification.title}
+                                    <br />
+                                    ${notification.text}
+                                  </li>
+                                </ul>
+                              </p>
+                              <footer>
+                                You received this email from <a href="${config.website}">${config.operatingEntity}</a>, because you have opted-in for notification.
+                              </footer>
+                            </body>
+                          </html>
+        """))
       Future{
         println("Sending email")
         val msgId = mailerClient.send(send)

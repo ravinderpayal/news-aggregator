@@ -1,7 +1,8 @@
-package notification
+package v1.notification
 
 import javax.inject.{Inject, Singleton}
 import models.AppUser
+import utils.Email
 
 import scala.concurrent.ExecutionContext
 

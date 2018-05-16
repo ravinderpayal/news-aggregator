@@ -1,4 +1,5 @@
-@(questionForm: Form[AskQuestionForm])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+@import v1.askopinion.AskQuestionFormWithoutUser
+@(questionForm: Form[AskQuestionFormWithoutUser])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 @import helper._
 
@@ -23,13 +24,18 @@
                 }
                 </ul>
             }
-            @helper.form(action = routes.QuestionController.ask) {
+            @helper.form(action = v1.askopinion.routes.AskOpinionController.ask) {
                 @CSRF.formField
                 <div class="inputContainer" align="left">
-                    @helper.inputText(questionForm("name"))
+                    @helper.inputText(questionForm("name.firstName"))
+                    @helper.inputText(questionForm("name.middleName"))
+                    @helper.inputText(questionForm("name.lastName"))
                 </div>
                 <div class="inputContainer" align="left">
                     @helper.inputText(questionForm("email"))
+                </div>
+                <div class="inputContainer" align="left">
+                @helper.textarea(questionForm("subject"))
                 </div>
                 <div class="inputContainer" align="left">
                     @helper.textarea(questionForm("question"))

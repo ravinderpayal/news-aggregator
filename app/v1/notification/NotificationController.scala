@@ -1,4 +1,4 @@
-package notification
+package v1.notification
 
 import java.util.UUID
 

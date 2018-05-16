@@ -71,18 +71,7 @@ class UserRepositoryImpl @Inject()()(implicit ec: UserExecutionContext, val reac
   }
 
   override def create(user: AppUser)(implicit mc: MarkerContext): Future[Option[Boolean]] = {
-    val writeRes: Future[WriteResult] = collection.flatMap(_.insert(user))
-
-    writeRes.onComplete {
-      case Failure(e) => {
-        println(e.getMessage)
-
-        // todo: add log manager
-      }
-      case Success(_) => None
-    }
-
-    writeRes.map(_ => {
+    collection.flatMap(_.insert(user)).map(_ => {
       Some(true)
     })
   }

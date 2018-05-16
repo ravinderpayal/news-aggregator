@@ -2,7 +2,7 @@
   * @author Ravinder Payal <mail@ravinderpayal.com>
   * @since v1 2017-11-07
   */
-package feedback
+package v1.feedback
 
 import java.util.UUID
 

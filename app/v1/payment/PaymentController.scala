@@ -1,4 +1,4 @@
-package payment
+package v1.payment
 
 import java.util.UUID
 
@@ -16,19 +16,19 @@ import scala.concurrent.{ExecutionContext, Future}
 class PaymentController @Inject()(cc: PaymentControllerComponents)(implicit ec: ExecutionContext)
   extends PaymentBaseController(cc) {
   def get(id:UUID): Action[AnyContent] = PaymentActionAuthenticated.async{implicit request =>
-    paymentResourceHandler.get(UUID.fromString(request.userId), id)
+    paymentResourceHandler.get(request.user.id, id)
   }
   def processZero(paymentId: UUID): Action[AnyContent] = PaymentActionAuthenticated.async{
     implicit request =>
-      paymentResourceHandler.processZero(paymentId, UUID.fromString(request.userId))
+      paymentResourceHandler.processZero(paymentId, request.user.id)
   }
   def createPaypal(paymentId: UUID): Action[AnyContent] = PaymentActionAuthenticated.async{
     implicit request =>
-      paymentResourceHandler.createPaypal(paymentId, UUID.fromString(request.userId))
+      paymentResourceHandler.createPaypal(paymentId, request.user.id)
   }
   def authorizedOnPaypal(paymentId: UUID, paypalPaymentId: String, payerId: String): Action[AnyContent] = PaymentActionAuthenticated.async{
     implicit request =>
-      paymentResourceHandler.authorizedOnPaypal(paymentId, paypalPaymentId, payerId, UUID.fromString(request.userId))
+      paymentResourceHandler.authorizedOnPaypal(paymentId, paypalPaymentId, payerId, request.user.id)
   }
   // TODO: Complete make payment
   def make: Action[AnyContent] = PaymentActionAuthenticated.async{

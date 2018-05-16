@@ -25,7 +25,7 @@ import pdi.jwt.JwtSession._
   * security credentials, and useful shortcut methods.
   */
 trait AppRequestHeader extends MessagesRequestHeader with PreferredMessagesProvider
-class AppRequest[A](request: Request[A], val messagesApi: MessagesApi) extends WrappedRequest(request) with AppRequestHeader
+class AppRequest[A](val user: Option[UserLoggedIn], request: Request[A], val messagesApi: MessagesApi) extends WrappedRequest(request) with AppRequestHeader
 class AuthenticatedAppRequest[A](val user:UserLoggedIn, request: Request[A], val messagesApi: MessagesApi) extends WrappedRequest(request) with AppRequestHeader
 
 /**
@@ -71,7 +71,12 @@ class AppActionBuilder @Inject()(messagesApi: MessagesApi, playBodyParsers: Play
     // Convert to marker context and use request in block
     implicit val markerContext: MarkerContext = requestHeaderToMarkerContext(request)
 
-    val future = block(new AppRequest(request, messagesApi))
+    val future = request.jwtSession.getAs[UserLoggedIn]("user") match {
+      case Some(userLoggedIn) => {
+        block(new AppRequest(Some(userLoggedIn), request, messagesApi))
+      }
+      case None => block(new AppRequest(None,request, messagesApi))
+    }
 
     future.map { result =>
       request.method match {
@@ -104,26 +109,21 @@ class AppActionBuilderAuthenticated @Inject()(messagesApi: MessagesApi,
 
     // Convert to marker context and use request in block
     implicit val markerContext: MarkerContext = requestHeaderToMarkerContext(request)
-    val token = request.jwtSession
-    if(token.equals(null)){
-      notLoggedIn(request)
-    } else {
-      val future: Future[Result] = {
-        token.getAs[UserLoggedIn]("user") match {
-          case Some(userLoggedIn) => {
-              block(new AuthenticatedAppRequest(userLoggedIn, request, messagesApi)).map(_.withJwtSession(jwt.generate(config.apiHost, userLoggedIn)))
-          }
-          case None => notLoggedIn(request)
+    val future: Future[Result] = {
+      request.jwtSession.getAs[UserLoggedIn]("user") match {
+        case Some(userLoggedIn) => {
+            block(new AuthenticatedAppRequest(userLoggedIn, request, messagesApi)).map(_.withJwtSession(jwt.generate(config.apiHost, userLoggedIn)))
         }
+        case None => notLoggedIn(request)
       }
+    }
 
-      future.map { result =>
-        request.method match {
-          case GET | HEAD =>
-            result.withHeaders("Cache-Control" -> s"max-age: 100")
-          case other =>
-            result
-        }
+    future.map { result =>
+      request.method match {
+        case GET | HEAD =>
+          result.withHeaders("Cache-Control" -> s"max-age: 100")
+        case other =>
+          result
       }
     }
   }

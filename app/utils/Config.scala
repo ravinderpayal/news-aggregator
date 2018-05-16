@@ -43,6 +43,7 @@ class Config @Inject()(configuration: Configuration) {
   // def jwtAdminAuthenticationSecret: String = "application.admin.jwtToken.authentication" configOrElse "sdfsdyfreaf3kkhkjhjkh233e23d"
 
   // def emailVerificationResend: String = "application.jwtToken.emailVerificationResend" configOrElse "sdssderfeyffErfef3d"
+  def perOpinionFees = 99
 
   def apiHost: String = "application.apiHost" configOrElse "localhost"
   def apiHostProtocol: String = "application.apiHostProtocol" configOrElse "http://"

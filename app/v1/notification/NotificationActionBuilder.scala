@@ -1,4 +1,4 @@
-package notification
+package v1.notification
 
 import javax.inject.Inject
 import play.api.http.FileMimeTypes

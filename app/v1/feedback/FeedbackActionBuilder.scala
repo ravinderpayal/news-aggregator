@@ -1,4 +1,4 @@
-package feedback
+package v1.feedback
 
 import javax.inject.Inject
 import play.api.http.FileMimeTypes

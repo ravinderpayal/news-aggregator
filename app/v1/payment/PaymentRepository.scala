@@ -1,4 +1,4 @@
-package payment
+package v1.payment
 
 import java.util.{Date, UUID}
 
@@ -12,6 +12,7 @@ import reactivemongo.api.Cursor
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.play.json._
 import reactivemongo.play.json.collection._
+import utils.Money
 
 import scala.concurrent.Future
 import scala.language.implicitConversions
@@ -119,6 +120,13 @@ case class PaymentStatus(state: Int, message: String, success: Boolean){
 object PaymentStatus{
   implicit val paymentStatusFormat: OFormat[PaymentStatus] = Json.format[PaymentStatus]
 }
+case class PaymentStatusWithId(id: UUID, state: Int, message: String, success: Boolean){
+  def toJsValue: JsValue = Json.toJson(this)
+}
+object PaymentStatusWithId{
+  implicit val paymentStatusWithIdFormat: OFormat[PaymentStatusWithId] = Json.format[PaymentStatusWithId]
+}
+
 object PaymentStatusInitiated extends PaymentStatus(1, "Payment process initiated waiting for further action", false) {
  /* override val state = 1
   override val message = "Payment initiated waiting for further action"
@@ -147,7 +155,7 @@ object PaymentStatusTransferTakingTooLong extends PaymentStatus(150, "Fund trans
 
 
 
-case class PaymentData(paymentId: UUID,
+case class PaymentData(id: UUID,
                        userId: UUID,
                        money:Money,
                        time: Date,
@@ -156,11 +164,12 @@ case class PaymentData(paymentId: UUID,
                        successCallBack: PaymentOnSuccessCallBack,
                        data: Option[JsValue],
                        dataFromGateway: Option[JsValue]){
+  def toStatusWithId = PaymentStatusWithId(id, status.state,status.message, status.success)
   def toJsValue = Json.toJson(this)
-  def toPublic = PaymentDataPublic(paymentId, userId, money, time, status, label)
+  def toPublic = PaymentDataPublic(id, userId, money, time, status, label)
 }
 
-case class  PaymentOnSuccessCallBack(productClass: String, productId: UUID)
+case class  PaymentOnSuccessCallBack(productClass: String, referenceId: UUID)
 object PaymentOnSuccessCallBack {
   implicit val paymentOnSuccessCallBack: OFormat[PaymentOnSuccessCallBack] = Json.format[PaymentOnSuccessCallBack]
 }

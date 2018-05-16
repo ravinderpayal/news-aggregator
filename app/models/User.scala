@@ -29,7 +29,7 @@ object Gender extends Enumeration {
   implicit val genderWrites = Writes.enumNameWrites
 }
 
-case class AppUserProfile(name: UserName, picture: Option[String], dob:Date) {
+case class AppUserProfile(name: UserName, picture: Option[String], dob:Option[Date]) {
   def toJsValue = Json.toJson(this)
   override def toString = Json.prettyPrint(toJsValue)
 }
@@ -41,7 +41,7 @@ case class AppUser(
               mobileNumber: Option[String],
               gender: Gender,
               profile: AppUserProfile) {
-  def toUserLoggedIn(loginProvider: LoginProvider) = UserLoggedIn(this.id, loginProvider, utils.util.getAge(this.profile.dob), this.gender)
+  def toUserLoggedIn(loginProvider: LoginProvider) = UserLoggedIn(this.id, loginProvider, utils.util.getAge(this.profile.dob.get), this.gender)
   def toJsValue = Json.toJson(this)
   override def toString = {
     val ret = Json.prettyPrint(toJsValue)

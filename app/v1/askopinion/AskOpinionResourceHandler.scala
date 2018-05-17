@@ -4,7 +4,7 @@ import java.util.{Date, UUID}
 
 import data_repository.UserRepositoryImpl
 import javax.inject.{Inject, Provider}
-import models.{AppUser, AppUserProfile, Gender, UserName}
+import models._
 import v1.payment.{PaymentData, PaymentOnSuccessCallBack, PaymentStatusInitiated}
 import play.api.libs.json._
 import play.api.mvc.Results._
@@ -24,19 +24,22 @@ class AskOpinionResourceHandler @Inject()(routerProvider: Provider[AskOpinionRou
                                           paymentRepository: PaymentRepositoryImpl,
                                           config: Config)(implicit ec: ExecutionContext) {
   def create(userId: UUID, questionForm: AskQuestionForm) = {
+  }
+  def create(user: UserLoggedIn, questionForm: AskQuestionForm) = {
     val questionId = UUID.randomUUID()
     val time = new Date()
     val payment = PaymentData(UUID.randomUUID(),
-        userId, Money(config.perOpinionFees, "INR"),
+        user.id, user.mobileNumber, user.email, Money(config.perOpinionFees, "INR"),
         time, PaymentStatusInitiated,
         s"Payment for opinion: ${questionId.toString}",
         PaymentOnSuccessCallBack("CLASS_ROOM", questionId), None, None)
-    val question = AskOpinionData(questionId, questionForm.subject, questionForm.question, userId, time, false, payment.toStatusWithId, None)
+    val question = AskOpinionData(questionId, questionForm.subject, questionForm.question, user.id, time, false, payment.toStatusWithId, None)
     askOpinionRepository.create(question).flatMap(_ match {
       case Some(x) if x =>     paymentRepository.create(payment).map (_ match {
         case Some(r) => {
           if (r) {
-            Ok(ApplicationResult("", true, "", Some(payment.toPublic.toJsValue)).toJsValue)
+            // Ok(ApplicationResult("", true, "", Some(payment.toPublic.toJsValue)).toJsValue)
+            Redirect(v1.payment.routes.PaymentController.createPaytm(payment.id.toString))
           } else InternalServerError
         }
         case None => InternalServerError
@@ -45,10 +48,10 @@ class AskOpinionResourceHandler @Inject()(routerProvider: Provider[AskOpinionRou
     })
   }
   def create(questionForm: AskQuestionFormWithoutUser):Future[Result] = {
-    val user = AppUser(UUID.randomUUID, None, Option(questionForm.email), None, Gender.Others, AppUserProfile(questionForm.name, None, None))
+    val user = AppUser(UUID.randomUUID, None, questionForm.email, questionForm.mobileNumber.toString, None, Gender.Others, AppUserProfile(questionForm.name, None, None))
     userRepository.create(user) flatMap (_ match {
       case Some(x) if x => {
-        create(user.id, questionForm.toQuestionForm)
+        create(user.toUserLoggedIn(LoginProvider.Email), questionForm.toQuestionForm)
       }
       case _ => Future.successful(ServiceUnavailable)
     })

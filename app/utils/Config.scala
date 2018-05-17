@@ -44,7 +44,8 @@ class Config @Inject()(configuration: Configuration) {
 
   // def emailVerificationResend: String = "application.jwtToken.emailVerificationResend" configOrElse "sdssderfeyffErfef3d"
   def perOpinionFees = 99
-
+  def paytmMid: String =  "application.payment.paytm.mid" configOrElse "n/a"
+  def paytmIndustryType: String =  "application.payment.paytm.industryType" configOrElse "n/a"
   def apiHost: String = "application.apiHost" configOrElse "localhost"
   def apiHostProtocol: String = "application.apiHostProtocol" configOrElse "http://"
   def apiHostPort: String = "application.apiHostPort" configOrElse "9000"

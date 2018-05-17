@@ -5,6 +5,12 @@
 
 # An example controller showing a sample home page
 GET     /                           controllers.HomeController.index
+GET     /aboutus                    controllers.HomeController.about
+GET     /services                   controllers.HomeController.services
+GET     /privacypolicy              controllers.HomeController.privacyPolicy
+GET     /termsandconditions         controllers.HomeController.tnc
+
+GET     /pay/paytm/:paymentId       v1.payment.PaymentController.createPaytm(paymentId)
 
 GET     /signup                           controllers.HomeController.signup
 GET     /login                           controllers.HomeController.login

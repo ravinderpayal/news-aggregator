@@ -26,6 +26,11 @@ class PaymentController @Inject()(cc: PaymentControllerComponents)(implicit ec: 
     implicit request =>
       paymentResourceHandler.createPaypal(paymentId, request.user.id)
   }
+  def createPaytm(paymentId: String): Action[AnyContent] = PaymentAction.async{
+    implicit request =>
+      paymentResourceHandler.createPaytm(UUID.fromString(paymentId))
+  }
+
   def authorizedOnPaypal(paymentId: UUID, paypalPaymentId: String, payerId: String): Action[AnyContent] = PaymentActionAuthenticated.async{
     implicit request =>
       paymentResourceHandler.authorizedOnPaypal(paymentId, paypalPaymentId, payerId, request.user.id)

@@ -26,45 +26,23 @@
         <link rel="stylesheet" href="@routes.Assets.versioned("css/magnific-popup.css")">
 
             <!-- Owl Carousel css -->
-        <link rel="stylesheet" href="@routes.Assets.versioned("css/owl.theme.css")>
+        <link rel="stylesheet" href="@routes.Assets.versioned("css/owl.theme.css")">
         <link rel="stylesheet" href="@routes.Assets.versioned("css/owl.carousel.css")">
 
             <!-- Main css -->
         <link rel="stylesheet" href="@routes.Assets.versioned("css/style.css")">
+        <!--<link rel="stylesheet" href="@routes.Assets.versioned("css/materialize.min.css")">-->
         <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/main.css")" />
     <script src="@routes.Assets.versioned("jquery-1.10.2.min.js")"></script>
-        <script>
-$(document).ready(function(){
-
-    $(".modal").fadeIn();
-    $(".modal_main").show();
-
-});
-$(document).ready(function(){
-    $(".close1").click(function(){
-        $(".modal").fadeOut();
-        $(".modal_main").fadeOut();
-    });
-});
-
-$(document).ready(function(){
-    $(".close2").click(function(){
-        window.location.replace("http://www.google.com");
-    });
-});
-</script>
     </head>
     <body data-spy="scroll" data-target=".navbar-collapse" data-offset="50">
         <div class="modal">
             <div class="modal_close close"></div>
             <div class="modal_main">
                 <div id="dialog-window">
-
                     <div id="scrollable-content">
                         <h1 align="center"> Disclaimer and Refund Policy </h1>
                         <p>
-
-
                             <br/>1. The opinion rendered is a high-level summary of query submitted by you. The note does not contain detailed processes and conditions prescribed under various applicable laws, if applicable, subject to your query.
 
                             <br/>2. We do not purport to be experts on and do not purport to be generally familiar with or qualified to express legal opinions based on any law, other than the laws of India. We accordingly express no opinion as to matters governed by any law other than the laws of the Republic of India. Any change in factual circumstances and assumptions may lead to changes in the views expressed and suggestions made herein.
@@ -84,11 +62,11 @@ $(document).ready(function(){
                         </p>
                     </div>
 
-                    <div id="footer">
-                        <center><button class="close1"> Accept </button>
-                            <button class="close2"> Deny </button></center>
+                    <div id="modalFooter" align="center">
+                        <button class="waves-effect waves-light btn modalClose1"> Accept </button>
+                            &nbsp;&nbsp;&nbsp;
+                        <button class="waves-effect waves-light btn red modalClose2"> Deny </button>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -110,20 +88,23 @@ $(document).ready(function(){
 
                     <!-- NAVBAR HEADER -->
                 <div class="navbar-header">
-                    <button class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse"> <span class="icon icon-bar"></span> <span class="icon icon-bar"></span> <span class="icon icon-bar"></span> </button>
+                    <button class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon icon-bar"></span>
+                        <span class="icon icon-bar"></span> <span class="icon icon-bar"></span> </button>
                         <!-- lOGO TEXT HERE -->
-                    <a href="index.html" class="navbar-brand"><img src="images/logo.png" class="whtlogo" alt="" /> <img src="images/logo-color.png" class="logocolor" alt=""></a> </div>
+                    <a href="/" class="navbar-brand">
+                        <img src="/assets/logo.png" class="whtlogo" alt="" />
+                        <img src="/assets/logo.png" class="logocolor" alt=""></a>
+                </div>
 
                     <!-- NAVIGATION LINKS -->
                 <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav navbar-right">
-                        <li><a href="index.html">Home </a>
-
-                        </li>
-                        <li><a href="about-us.html">About</a></li>
-                        <li><a href="services.html">Services</a></li>
-                        <li><a href="contact-us.php">Opinion @@ INR 51/-</a></li>
-                        <li><a href="contact-us.html">Contact Us</a></li>
+                        <li><a href="/">Home </a></li>
+                        <li><a href="/aboutus">About</a></li>
+                        <li><a href="/services">Services</a></li>
+                        <li><a href="/ask">Opinion @@ INR 99/-</a></li>
+                        <li><a href="/contact-us">Contact Us</a></li>
 
                             <!--<li><span class="calltxt"><i class="fa fa-phone" aria-hidden="true"></i>022 - 22066649</span></li> -->
                     </ul>
@@ -133,45 +114,35 @@ $(document).ready(function(){
             @content
         <!-- Footer Section -->
         <div class="site-footer">
-
-
                 <!-- copyright start -->
             <div class="footer-bottom-area">
                 <div class="container">
                     <div class="row">
-                        <div class="col-md-12 col-md-6">Copyright &copy; 2017 <span>Take Our Opinion</span>| <a href="/tnc.html"> Terms and Conditions </a> | <a href="/pp.html"> Privacy Policy </a></div>
-                        <div class="col-md-12 col-md-6 text-right">Design &amp; Development By: <a href="https://www.facebook.com/themammothmedia">Mammoth Media</a></div>
+                        <div class="col-md-12 col-md-6">Copyright &copy; 2018 <span>Take Our Opinion</span>| <a href="@routes.HomeController.tnc()"> Terms and Conditions </a>
+                            |
+                        <a href="@routes.HomeController.privacyPolicy()"> Privacy Policy </a></div>
+                        <div class="col-md-12 col-md-6 text-right">Design &amp; Development By: <a href="https://www.mediaflix.com/ravinderpayal">Mediaflix</a></div>
                     </div>
                 </div>
             </div>
                 <!-- copyright end -->
         </div>
-
             <!-- Bootstrap -->
-        <script src="@routes.Assets.versioned("js/jquery-2.1.4.min.js")"></script>
-        <script src="@routes.Assets.versioned("js/bootstrap.min.js")"></script>
-
+        <script src="@routes.Assets.versioned("/js/jquery-2.1.4.min.js")"></script>
+        <script src="@routes.Assets.versioned("/js/bootstrap.min.js")"></script>
             <!-- Popup -->
-        <script src="@routes.Assets.versioned("js/jquery.magnific-popup.min.js")"></script>
-        <script src="@routes.Assets.versioned("js/magnific-popup-options.js")"></script>
-
+        <script src="@routes.Assets.versioned("/js/jquery.magnific-popup.min.js")"></script>
+        <script src="@routes.Assets.versioned("/js/magnific-popup-options.js")"></script>
             <!-- Carousel -->
-        <script src="@routes.Assets.versioned("js/owl.carousel.js")"></script>
-
+        <script src="@routes.Assets.versioned("/js/owl.carousel.js")"></script>
             <!-- Sticky Header -->
-        <script src="@routes.Assets.versioned("js/jquery.sticky.js")"></script>
-
-
+        <script src="@routes.Assets.versioned("/js/jquery.sticky.js")"></script>
             <!-- Parallax -->
-        <script src="@routes.Assets.versioned("js/jquery.parallax.js")"></script>
-
+        <script src="@routes.Assets.versioned("/js/jquery.parallax.js")"></script>
             <!-- Counter -->
-        <script src="@routes.Assets.versioned("js/counter.js")"></script>
-        <script src="@routes.Assets.versioned("js/smoothscroll.js")"></script>
-
+        <script src="@routes.Assets.versioned("/js/counter.js")"></script>
+        <script src="@routes.Assets.versioned("/js/smoothscroll.js")"></script>
             <!-- Custom -->
-        <script src="@routes.Assets.versioned("js/custom.js")></script>
+        <script src="@routes.Assets.versioned("/js/custom.js")"></script>
     </body>
-
-
 </html>

@@ -4,14 +4,14 @@ import java.util.UUID
 
 import javax.inject.{Inject, Singleton}
 import models.UserName
-import play.api.data.Form
+import play.api.data.{Form, Forms}
 import play.api.data.Forms.{email, mapping, optional, text}
 import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
 
 case class AskQuestionForm(subject: String, question: String)
-case class AskQuestionFormWithoutUser(name:UserName, email:String, subject: String, question: String) {
+case class AskQuestionFormWithoutUser(name:UserName, email:String, mobileNumber: Long, subject: String, question: String) {
   def toQuestionForm = AskQuestionForm(subject, question)
 }
 
@@ -34,8 +34,8 @@ class AskOpinionController @Inject()(cc: AskOpinionControllerComponents)(implici
 
   val askQuestionForm = Form(
     mapping(
-      "subject" -> text(minLength = 28, maxLength = 128),
-      "question" -> text(minLength = 128, maxLength = 4096)
+      "subject" -> text(minLength = 16, maxLength = 128),
+      "question" -> text(minLength = 32, maxLength = 4096)
     )(AskQuestionForm.apply)(AskQuestionForm.unapply)
   )
 
@@ -47,8 +47,9 @@ class AskOpinionController @Inject()(cc: AskOpinionControllerComponents)(implici
         "lastName" -> text(minLength = 2, maxLength = 128)
       )(UserName.apply)(UserName.unapply),
       "email" -> email,
-      "subject" -> text(minLength = 28, maxLength = 128),
-      "question" -> text(minLength = 128, maxLength = 4096)
+      "mobileNumber" -> Forms.longNumber(min = 1000000000L, max = 9999999999L),
+      "subject" -> text(minLength = 16, maxLength = 128),
+      "question" -> text(minLength = 32, maxLength = 4096)
     )(AskQuestionFormWithoutUser.apply)(AskQuestionFormWithoutUser.unapply)
   )
 
@@ -71,7 +72,7 @@ class AskOpinionController @Inject()(cc: AskOpinionControllerComponents)(implici
       case Some(user) =>         askQuestionForm.bindFromRequest()(request).fold({ formWithErrors =>
         Future.successful(BadRequest(v1.views.html.askquestion(formWithErrors)(request, request2Messages)))
       }, { form =>
-        askOpinionResourceHandler.create(user.id,form)
+        askOpinionResourceHandler.create(user,form)
       })
       case None =>
         askQuestionFormWithoutUser.bindFromRequest()(request).fold({ formWithErrors =>

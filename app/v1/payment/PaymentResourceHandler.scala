@@ -8,7 +8,7 @@ import play.api.libs.json._
 import play.api.libs.ws._
 import play.api.mvc.Results._
 import play.api.mvc._
-import utils.ApplicationResult
+import utils.{ApplicationResult, Config}
 import v1.askopinion.AskOpinionResourceHandler
 
 // import v1.job.{JobData, JobRepositoryImpl}
@@ -19,11 +19,11 @@ import scala.concurrent.{ExecutionContext, Future}
 /**
   * Controls access to and creation of the backend data
   */
-class PaymentResourceHandler @Inject()( routerProvider: Provider[PaymentRouter],
-                                        paymentRepository: PaymentRepositoryImpl,
-                                        config: Configuration,
-                                        ws: WSClient,
-                                        askOpinionResourceHandler: AskOpinionResourceHandler
+class PaymentResourceHandler @Inject()(routerProvider: Provider[PaymentRouter],
+                                       paymentRepository: PaymentRepositoryImpl,
+                                       config: Config,
+                                       ws: WSClient,
+                                       askOpinionResourceHandler: AskOpinionResourceHandler
                                       )(implicit ec: ExecutionContext) {
   def get(userId:UUID, paymentId: UUID):Future[Result] = {
     paymentRepository.get(paymentId, userId).map(_ match {
@@ -98,6 +98,35 @@ class PaymentResourceHandler @Inject()( routerProvider: Provider[PaymentRouter],
       case None => Future.successful(NotAcceptable)
     })
   }
+  def createPaytm(paymentId: UUID) = {
+    paymentRepository.get(paymentId).flatMap(_ match {
+      case Some(payment) if !payment.status.success=> getAccessToken.map { tokResponse =>
+        val hash = utils.hash.sha256Hash(payment.toString)
+        ws.url("https://api.sandbox.paypal.com/v1/payments/payment").addHttpHeaders(
+          "Authorization" -> s"Bearer $tokResponse",
+          "Content-Type" -> "application/json"
+        ).post(
+          "MID" -> config.paytmMid,
+          "ORDER_ID" -> payment.successCallBack.referenceId,
+          "CUST_ID" -> payment.userId,
+          "TXN_AMOUNT" -> payment.money.amount,
+          "CHANNEL_ID" -> "WEB",
+          "INDUSTRY_TYPE_ID" -> config.paytmIndustryType,
+          "WEBSITE" -> "WEB_STAGING",
+          "CHECKSUMHASH" -> hash,
+          "MOBILE_NO" -> payment.mobileNumber,
+          "EMAIL" -> payment.email
+
+        ).map {
+          response => Ok(ApplicationResult("", true,  "", Some(response.json)).toJsValue)
+        }
+
+        Ok(v1.views.html.paytm(payment.userId, payment.money.amount, payment.successCallBack.referenceId, hash))
+      }
+      case None => Future.successful(NotAcceptable)
+    })
+  }
+
   def authorizedOnPaypal(paymentId: UUID, paypalPaymentId: String, paypalPayerId: String, userId: UUID) = {
     //    curl -v https://api.sandbox.paypal.com/v1/payments/payment/payment_id/execute/ \\
     //  -H "Content-Type:application/json" \\

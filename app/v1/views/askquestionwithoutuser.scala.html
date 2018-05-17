@@ -3,9 +3,25 @@
 
 @import helper._
 
-@main("Login | Ask my opinion") {
-    <section>
-        <div align="center">
+@main("Ask | Take our opinion") {
+    <div class="pageTitle">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <h1 class="page-heading">Ask</h1>
+                </div>
+                <div class="col-md-6 col-sm-6">
+                    <div class="breadCrumb">
+                        <a href="#.">Home</a> /
+                        <span>Ask</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        <!-- Page Title End -->
+    <div align="center">
+        <div style="width:50%;">
             <!--
             <form>
                 <fieldset>
@@ -27,22 +43,56 @@
             @helper.form(action = v1.askopinion.routes.AskOpinionController.ask) {
                 @CSRF.formField
                 <div class="inputContainer" align="left">
-                    @helper.inputText(questionForm("name.firstName"))
-                    @helper.inputText(questionForm("name.middleName"))
-                    @helper.inputText(questionForm("name.lastName"))
+                    <div class="form-group">
+                        <label for="@questionForm("name.firstName").id">First name:</label>
+                        <input class="form-control" type="text" placeholder="First name" value="@questionForm("name.firstName").value" name="@questionForm("name.firstName").name" id="@questionForm("name.firstName").id">
+                        @for(err <- questionForm("name.firstName").errors) {
+                            @err.format
+                            <br />
+                        }
+
+                        <label for="@questionForm("name.middleName").id">Middle name:</label>
+                        <input class="form-control" type="text" placeholder="Middle name" value="@questionForm("name.middleName").value" name="@questionForm("name.middleName").name" id="@questionForm("name.middleName").id">
+                        @for(err <- questionForm("name.middleName").errors) {
+                            @err.format
+                            <br />
+                        }
+
+                        <label for="@questionForm("name.lastName").id">Last name:</label>
+                        <input class="form-control" type="text" placeholder="Last name" value="@questionForm("name.lastName").value" name="@questionForm("name.lastName").name" id="@questionForm("name.lastName").id">
+                        @for(err <- questionForm("name.lastName").errors) {
+                            @err.format
+                            <br />
+                        }
+                        <label for="@questionForm("email").id">Email:</label>
+                        <input class="form-control" type="text" placeholder=Email" value="@questionForm("email").value" name="@questionForm("email").name" id="@questionForm("email").id">
+                        @for(err <- questionForm("email").errors) {
+                            @err.format
+                            <br />
+                        }
+                        <label for="@questionForm("subject").id">Subject:</label>
+                        <input class="form-control" type="text" placeholder=Email" value="@questionForm("subject").value" name="@questionForm("subject").name" id="@questionForm("subject").id">
+                        @for(err <- questionForm("subject").errors) {
+                            @err.format
+                            <br />
+                        }
+                        <label for="@questionForm("question").id">Question:</label>
+                        <textarea class="form-control" type="text" placeholder="Question" name="@questionForm("question").name" id="@questionForm("question").id">@questionForm("question").value</textarea>
+                        @for(err <- questionForm("question").errors) {
+                            @err.format
+                            <br />
+                        }
+                    </div>
+                    <br />
+                    <br />
+                    <div class="inputContainer">
+                        <input class="btn btn-default" type="submit" />
+                    </div>
+                    <br />
+                    <br />
                 </div>
-                <div class="inputContainer" align="left">
-                    @helper.inputText(questionForm("email"))
-                </div>
-                <div class="inputContainer" align="left">
-                @helper.textarea(questionForm("subject"))
-                </div>
-                <div class="inputContainer" align="left">
-                    @helper.textarea(questionForm("question"))
-                </div>
-                <input type="submit" />
             }
 
         </div>
-    </section>
+    </div>
 }

@@ -23,6 +23,7 @@ case class UserTvSeries(name: String, meta: Option[MovieMeta])
 case class UserMeta(bio: Option[String], education: List[UserEducation], interests: List[UserInterests], music: List[UserMusic], movies: List[UserMovies], tvSeries: List[UserTvSeries])
 
 object Gender extends Enumeration {
+  def apply(gender: String): Gender = if (gender == "Male") Gender.Female else if (gender == "Female") Gender.Female else Gender.Others
   type Gender = Value
   val Female, Male, Others = Value
   implicit val genderReads = Reads.enumNameReads(Gender)
@@ -37,11 +38,12 @@ case class AppUserProfile(name: UserName, picture: Option[String], dob:Option[Da
 case class AppUser(
               id: UUID,
               facebookId: Option[String],
-              email: Option[String],
-              mobileNumber: Option[String],
+              email: String,
+              mobileNumber: String,
+              password: Option[String],
               gender: Gender,
               profile: AppUserProfile) {
-  def toUserLoggedIn(loginProvider: LoginProvider) = UserLoggedIn(this.id, loginProvider, utils.util.getAge(this.profile.dob.get), this.gender)
+  def toUserLoggedIn(loginProvider: LoginProvider) = UserLoggedIn(id, email, mobileNumber, loginProvider, utils.util.getAge(profile.dob.get), gender)
   def toJsValue = Json.toJson(this)
   override def toString = {
     val ret = Json.prettyPrint(toJsValue)
@@ -80,7 +82,7 @@ object LoginProvider extends Enumeration {
   implicit val loginProviderWrites = Writes.enumNameWrites
 }
 
-case class UserLoggedIn(id: UUID, provider: LoginProvider, age: Int, gender: Gender)
+case class UserLoggedIn(id: UUID, email: String, mobileNumber: String, provider: LoginProvider, age: Int, gender: Gender)
 object UserLoggedIn {
   implicit val jsonFormat:OFormat[UserLoggedIn] = Json.format[UserLoggedIn]
 }

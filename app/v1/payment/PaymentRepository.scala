@@ -30,24 +30,32 @@ trait PaymentRepository {
 
   /**
     * For general payment requests of users.
-    * @param paymentId
+    * @param id
     * @param userId
     * @param mc
     * @return
     */
-  def get(paymentId:UUID, userId: UUID)(implicit mc: MarkerContext): Future[Option[PaymentData]]
+  def get(id:UUID, userId: UUID)(implicit mc: MarkerContext): Future[Option[PaymentData]]
+
+  /**
+    * For general payment requests of users.
+    * @param id
+    * @param mc
+    * @return
+    */
+  def get(id:UUID)(implicit mc: MarkerContext): Future[Option[PaymentData]]
 
   /**
     *
     * Only for use with Admin Panel. Don't jeopardize the system for using with concerns
-    * @param paymentId
+    * @param id
     * @param mc
     * @return
     */
-  def getForAdmin(paymentId: UUID)(implicit mc: MarkerContext): Future[Option[PaymentData]]
+  def getForAdmin(id: UUID)(implicit mc: MarkerContext): Future[Option[PaymentData]]
   def getLatest(userId: UUID)(implicit mc: MarkerContext): Future[List[PaymentData]]
 
-  def updateStatus(paymentId: UUID, status: PaymentStatus)(implicit mc: MarkerContext): Future[Option[Boolean]]
+  def updateStatus(id: UUID, status: PaymentStatus)(implicit mc: MarkerContext): Future[Option[Boolean]]
 
   def logPaypal(log: PaypalLog)(implicit mc: MarkerContext): Future[Option[Boolean]]
 }
@@ -68,12 +76,15 @@ class PaymentRepositoryImpl @Inject()()(implicit ec: PaymentExecutionContext, va
 
   private val logger = Logger(this.getClass)
 
-  override def get(paymentId: UUID, userId: UUID)(implicit mc: MarkerContext): Future[Option[PaymentData]] = {
-    paymentCollection.flatMap (_.find(Json.obj("paymentId" -> paymentId, "userId" -> userId)).one[PaymentData])
+  override def get(id: UUID, userId: UUID)(implicit mc: MarkerContext): Future[Option[PaymentData]] = {
+    paymentCollection.flatMap (_.find(Json.obj("id" -> id, "userId" -> userId)).one[PaymentData])
+  }
+  override def get(id: UUID)(implicit mc: MarkerContext): Future[Option[PaymentData]] = {
+    paymentCollection.flatMap (_.find(Json.obj("id" -> id)).one[PaymentData])
   }
 
-  override def getForAdmin(paymentId: UUID)(implicit mc: MarkerContext): Future[Option[PaymentData]] = {
-    paymentCollection.flatMap (_.find(Json.obj("paymentId"->paymentId)).one[PaymentData])
+  override def getForAdmin(id: UUID)(implicit mc: MarkerContext): Future[Option[PaymentData]] = {
+    paymentCollection.flatMap (_.find(Json.obj("id"->id)).one[PaymentData])
   }
   override def getLatest(userId: UUID)(implicit mc: MarkerContext): Future[List[PaymentData]] = {
     paymentCollection.flatMap (_.find(
@@ -97,9 +108,9 @@ class PaymentRepositoryImpl @Inject()()(implicit ec: PaymentExecutionContext, va
       Some(true)
     })
   }
-  override def updateStatus(paymentId: UUID, status: PaymentStatus)(implicit mc: MarkerContext): Future[Option[Boolean]] = {
+  override def updateStatus(id: UUID, status: PaymentStatus)(implicit mc: MarkerContext): Future[Option[Boolean]] = {
     paymentCollection.flatMap(
-      _.update(Json.obj("paymentId" -> paymentId), Json.obj("$set" -> Json.obj("status" -> status)))
+      _.update(Json.obj("id" -> id), Json.obj("$set" -> Json.obj("status" -> status)))
     ).map(_ => {
         Some(true)
       })
@@ -110,7 +121,7 @@ class PaymentRepositoryImpl @Inject()()(implicit ec: PaymentExecutionContext, va
     })
   }
 }
-case class PaypalLog(paymentId: UUID, log: JsValue)
+case class PaypalLog(id: UUID, log: JsValue)
 object PaypalLog{
   implicit val paypalLogFormat: OFormat[PaypalLog] = Json.format[PaypalLog]
 }
@@ -157,6 +168,8 @@ object PaymentStatusTransferTakingTooLong extends PaymentStatus(150, "Fund trans
 
 case class PaymentData(id: UUID,
                        userId: UUID,
+                       mobileNumber: String,
+                       email: String,
                        money:Money,
                        time: Date,
                        status: PaymentStatus,
@@ -166,6 +179,7 @@ case class PaymentData(id: UUID,
                        dataFromGateway: Option[JsValue]){
   def toStatusWithId = PaymentStatusWithId(id, status.state,status.message, status.success)
   def toJsValue = Json.toJson(this)
+  override def toString = Json.stringify(toJsValue)
   def toPublic = PaymentDataPublic(id, userId, money, time, status, label)
 }
 
@@ -178,7 +192,7 @@ object PaymentData{
   implicit val paymentDataFormat: OFormat[PaymentData] = Json.format[PaymentData]
 }
 
-case class PaymentDataPublic(paymentId: UUID, userId: UUID, money:Money, time: Date, status: PaymentStatus, label: String){
+case class PaymentDataPublic(id: UUID, userId: UUID, money:Money, time: Date, status: PaymentStatus, label: String){
   def toJsValue = Json.toJson(this)
 }
 object PaymentDataPublic{

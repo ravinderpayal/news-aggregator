@@ -9,7 +9,7 @@ import play.api.libs.ws._
 import play.api.mvc.Results._
 import play.api.mvc._
 import utils.{ApplicationResult, Config}
-import v1.askopinion.AskOpinionResourceHandler
+import v1.askopinion.EnterUrlResourceHandler
 
 // import v1.job.{JobData, JobRepositoryImpl}
 
@@ -23,7 +23,7 @@ class PaymentResourceHandler @Inject()(routerProvider: Provider[PaymentRouter],
                                        paymentRepository: PaymentRepositoryImpl,
                                        config: Config,
                                        ws: WSClient,
-                                       askOpinionResourceHandler: AskOpinionResourceHandler
+                                       askOpinionResourceHandler: EnterUrlResourceHandler
                                       )(implicit ec: ExecutionContext) {
   def get(userId:UUID, paymentId: UUID):Future[Result] = {
     paymentRepository.get(paymentId, userId).map(_ match {
@@ -52,79 +52,88 @@ class PaymentResourceHandler @Inject()(routerProvider: Provider[PaymentRouter],
 
   }
   */
-  def createPaypal(paymentId: UUID, userId: UUID) = {
+  def createPaypal(paymentId: UUID, userId: UUID):Future[Result] = {
     paymentRepository.get(paymentId, userId).flatMap(_ match {
       case Some(payment) if !payment.status.success=> getAccessToken.flatMap { tokResponse =>
-      val postData = Json.obj(
-        "intent" -> "sale",
-        "redirect_urls" -> Json.obj(
-          "return_url" -> "https://mandisoft.com/app/payment/paypal/accepted",
-          "cancel_url" -> "https://mandisoft.com/app/payment/paypal/cancelled"
-        ),
-        "payer" -> Json.obj("payment_method" -> "paypal"),
-        "transactions" -> List(
-          Json.obj(
-            "amount"  -> Json.obj(
-              "total" -> payment.money.amount,
-              "currency" -> "USD",
-              "details" -> Json.obj(
-                "subtotal" -> payment.money.amount,
-                "tax" -> "0")
-              ),
-            "item_list" -> Json.obj(
-              "items" -> List(Json.obj(
-                "quantity" -> "1",
-                "name" -> "Course",
-                "price" -> payment.money.amount,
+        val postData = Json.obj(
+          "intent" -> "sale",
+          "redirect_urls" -> Json.obj(
+            "return_url" -> "https://mandisoft.com/app/payment/paypal/accepted",
+            "cancel_url" -> "https://mandisoft.com/app/payment/paypal/cancelled"
+          ),
+          "payer" -> Json.obj("payment_method" -> "paypal"),
+          "transactions" -> List(
+            Json.obj(
+              "amount"  -> Json.obj(
+                "total" -> payment.money.amount,
                 "currency" -> "USD",
-                "description" -> payment.label,
-                "tax" -> "0"))
-              ),
-            "description" -> payment.label,
-            "invoice_number" -> payment.id.toString
+                "details" -> Json.obj(
+                  "subtotal" -> payment.money.amount,
+                  "tax" -> "0")
+                ),
+              "item_list" -> Json.obj(
+                "items" -> List(Json.obj(
+                  "quantity" -> "1",
+                  "name" -> "Course",
+                  "price" -> payment.money.amount,
+                  "currency" -> "USD",
+                  "description" -> payment.label,
+                  "tax" -> "0"))
+                ),
+              "description" -> payment.label,
+              "invoice_number" -> payment.id.toString
+            )
           )
         )
-      )
-      // .toString()
-      ws.url("https://api.sandbox.paypal.com/v1/payments/payment").addHttpHeaders(
-        "Authorization" -> s"Bearer $tokResponse",
-        "Content-Type" -> "application/json"
-      ).post(
-        postData.toString
-      ).map {
-        response => Ok(ApplicationResult("", true,  "", Some(response.json)).toJsValue)
-      }
-      }
-      case None => Future.successful(NotAcceptable)
-    })
-  }
-  def createPaytm(paymentId: UUID) = {
-    paymentRepository.get(paymentId).flatMap(_ match {
-      case Some(payment) if !payment.status.success=> getAccessToken.map { tokResponse =>
-        val hash = utils.hash.sha256Hash(payment.toString)
         ws.url("https://api.sandbox.paypal.com/v1/payments/payment").addHttpHeaders(
           "Authorization" -> s"Bearer $tokResponse",
           "Content-Type" -> "application/json"
         ).post(
-          "MID" -> config.paytmMid,
-          "ORDER_ID" -> payment.successCallBack.referenceId,
-          "CUST_ID" -> payment.userId,
-          "TXN_AMOUNT" -> payment.money.amount,
-          "CHANNEL_ID" -> "WEB",
-          "INDUSTRY_TYPE_ID" -> config.paytmIndustryType,
-          "WEBSITE" -> "WEB_STAGING",
-          "CHECKSUMHASH" -> hash,
-          "MOBILE_NO" -> payment.mobileNumber,
-          "EMAIL" -> payment.email
-
+          postData.toString
         ).map {
           response => Ok(ApplicationResult("", true,  "", Some(response.json)).toJsValue)
         }
-
-        Ok(v1.views.html.paytm(payment.userId, payment.money.amount, payment.successCallBack.referenceId, hash))
       }
-      case None => Future.successful(NotAcceptable)
+      case _ => Future.successful(NotAcceptable)
     })
+  }
+  def createPaytm(paymentId: UUID):Future[Result] = {
+    paymentRepository.get(paymentId).flatMap {
+      case Some(payment) if !payment.status.success=> {
+        val hash = utils.hash.sha256Hash(payment.toString)
+        /*val formData: Map[String, Seq[String]] = Map(
+          "MID" -> Seq(config.paytmMid),
+          "ORDER_ID" -> Seq(payment.successCallBack.referenceId.toString),
+          "CUST_ID" -> Seq(payment.userId.toString),
+          "TXN_AMOUNT" -> Seq(payment.money.amount.toString),
+          "CHANNEL_ID" -> Seq("WEB"),
+          "INDUSTRY_TYPE_ID" -> Seq(config.paytmIndustryType),
+          "WEBSITE" -> Seq("WEB_STAGING"),
+          "CHECKSUMHASH" -> Seq(hash),
+          "MOBILE_NO" -> Seq(payment.mobileNumber),
+          "EMAIL" -> Seq(payment.email))
+        println(formData)
+        ws.url("https://securegw-stage.paytm.in/theia/processTransaction").post(
+          formData
+        ).map {
+          response => {
+            if (response.status == 200) {
+              // Ok(v1.views.html.paytm(payment.userId, payment.money.amount, payment.successCallBack.referenceId, hash))
+              Ok(response.body)
+            } else {
+              ServiceUnavailable(response.body)
+            }
+          }/*,
+          err => {
+            ServiceUnavailable(err)
+          }*/
+        }*/
+        Future.successful(
+          Ok(v1.views.html.paytm(payment.userId.toString.replace("-", ""), payment.money.amount.toString, payment.successCallBack.referenceId.toString, hash))
+        )
+      }
+      case _ => Future.successful(NotAcceptable)
+    }
   }
 
   def authorizedOnPaypal(paymentId: UUID, paypalPaymentId: String, paypalPayerId: String, userId: UUID) = {

@@ -43,7 +43,7 @@ case class AppUser(
               password: Option[String],
               gender: Gender,
               profile: AppUserProfile) {
-  def toUserLoggedIn(loginProvider: LoginProvider) = UserLoggedIn(id, email, mobileNumber, loginProvider, utils.util.getAge(profile.dob.get), gender)
+  def toUserLoggedIn(loginProvider: LoginProvider) = UserLoggedIn(id, email, mobileNumber, loginProvider, gender)
   def toJsValue = Json.toJson(this)
   override def toString = {
     val ret = Json.prettyPrint(toJsValue)
@@ -82,7 +82,7 @@ object LoginProvider extends Enumeration {
   implicit val loginProviderWrites = Writes.enumNameWrites
 }
 
-case class UserLoggedIn(id: UUID, email: String, mobileNumber: String, provider: LoginProvider, age: Int, gender: Gender)
+case class UserLoggedIn(id: UUID, email: String, mobileNumber: String, provider: LoginProvider, gender: Gender)
 object UserLoggedIn {
   implicit val jsonFormat:OFormat[UserLoggedIn] = Json.format[UserLoggedIn]
 }

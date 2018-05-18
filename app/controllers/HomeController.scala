@@ -52,15 +52,6 @@ class HomeController @Inject()(cc: UserControllerComponents) extends UserBaseCon
   def about = Action {
     Ok(views.html.aboutus())
   }
-  def services = Action {
-    Ok(views.html.services())
-  }
-  def privacyPolicy = Action {
-    Ok(views.html.privacypolicy())
-  }
-  def tnc = Action {
-    Ok(views.html.tnc())
-  }
 
   def login = Action {implicit request =>
     Ok(views.html.login(userLoginForm))

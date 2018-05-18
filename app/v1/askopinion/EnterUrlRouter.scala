@@ -10,7 +10,7 @@ import utils.extractors._
 /**
   * Routes and URLs to the Notification controller.
   */
-class AskOpinionRouter @Inject()(controller: AskOpinionController) extends SimpleRouter {
+class EnterUrlRouter @Inject()(controller: AskOpinionController) extends SimpleRouter {
   val prefix = "/api/v1/notification"
 
   override def routes: Routes = {

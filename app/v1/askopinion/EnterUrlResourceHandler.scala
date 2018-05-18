@@ -18,11 +18,11 @@ import scala.concurrent.{ExecutionContext, Future}
 /**
   * Controls access to and creation of the backend data
   */
-class AskOpinionResourceHandler @Inject()(routerProvider: Provider[AskOpinionRouter],
-                                          userRepository: UserRepositoryImpl,
-                                          askOpinionRepository: AskOpinionRepositoryImpl,
-                                          paymentRepository: PaymentRepositoryImpl,
-                                          config: Config)(implicit ec: ExecutionContext) {
+class EnterUrlResourceHandler @Inject()(routerProvider: Provider[EnterUrlRouter],
+                                        userRepository: UserRepositoryImpl,
+                                        askOpinionRepository: AskOpinionRepositoryImpl,
+                                        paymentRepository: PaymentRepositoryImpl,
+                                        config: Config)(implicit ec: ExecutionContext) {
   def create(userId: UUID, questionForm: AskQuestionForm) = {
   }
   def create(user: UserLoggedIn, questionForm: AskQuestionForm) = {

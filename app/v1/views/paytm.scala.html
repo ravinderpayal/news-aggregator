@@ -1,6 +1,4 @@
-@import java.util.UUID
-@import scala.collection.immutable.Range.Int
-@(customerId: UUID, amount: Int, orderId: UUID, hash: String )
+@(userId: String, amount: String, orderId: String, hash: String )
 <html>
     <head>
         <title>Merchant Check Out Page</title>
@@ -17,9 +15,9 @@
             <input type="hidden" name="INDUSTRY_TYPE_ID" value="Retail">
             <input type="hidden" name="WEBSITE" value="APP_STAGING">
             <input type="hidden" name="CALLBACK_URL" value="https://pguat.paytm.com/paytmchecksum/paytmCallback.jsp">
-            <input type="hidden" name="CUST_ID" value="@orderId.toString">
-            <input type="hidden" name="ORDER_ID" value="@orderId.toString">
-            <input type="hidden" name="TXN_AMOUNT" value="@amount.toString">
+            <input type="hidden" name="CUST_ID" value="@userId">
+            <input type="hidden" name="ORDER_ID" value="@orderId">
+            <input type="hidden" name="TXN_AMOUNT" value="@amount">
             <input type="hidden" name="CHECKSUMHASH" value="@hash">
             <script type="text/javascript">
                     document.f1.submit();

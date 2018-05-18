@@ -70,6 +70,13 @@
                             @err.format
                             <br />
                         }
+                        <label for="@questionForm("mobileNumber").id">Mobile number:</label>
+                        <input class="form-control" type="text" placeholder="Mobile Number" value="@questionForm("mobileNumber").value" name="@questionForm("mobileNumber").name" id="@questionForm("mobileNumber").id">
+                        @for(err <- questionForm("mobileNumber").errors) {
+                            @err.format
+                            <br />
+                        }
+
                         <label for="@questionForm("subject").id">Subject:</label>
                         <input class="form-control" type="text" placeholder=Email" value="@questionForm("subject").value" name="@questionForm("subject").name" id="@questionForm("subject").id">
                         @for(err <- questionForm("subject").errors) {

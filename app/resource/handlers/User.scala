@@ -12,7 +12,6 @@ import play.api.libs.json.Json
 import play.api.mvc.Results._
 import play.api.mvc._
 import utils.{Config, jwt}
-import v1.payment.routes
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -27,7 +26,7 @@ class UserResourceHandler @Inject()(userRepository: UserRepositoryImpl,
   import pdi.jwt.JwtSession._
   def login(form: UserLoginForm):Future[Result] = {
     userRepository.verify(email = form.email, passWord = utils.hash.sha256Hash(form.password)) map(_ match {
-      case Some(x) => Redirect(controllers.routes.HomeController.index()).withJwtSession(genLoginSession(x.toUserLoggedIn(LoginProvider.Email)))
+      case Some(x) => Redirect(v1.enterurl.routes.EnterUrlController.index()).withJwtSession(genLoginSession(x.toUserLoggedIn(LoginProvider.Email)))
       case None => ServiceUnavailable
     })
   }

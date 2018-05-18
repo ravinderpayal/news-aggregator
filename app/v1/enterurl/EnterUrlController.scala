@@ -1,4 +1,4 @@
-package v1.askopinion
+package v1.enterurl
 
 import java.util.UUID
 
@@ -6,7 +6,10 @@ import javax.inject.{Inject, Singleton}
 import models.UserName
 import play.api.data.{Form, Forms}
 import play.api.data.Forms.{email, mapping, optional, text}
+import play.api.libs.json._
 import play.api.mvc._
+
+import scrapper.JobManager
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -17,17 +20,24 @@ import scala.concurrent.{ExecutionContext, Future}
   *
 */
 @Singleton
-class EnterUrlController @Inject()(cc: EnterUrlControllerComponents)(implicit ec: ExecutionContext)
+class EnterUrlController @Inject()(cc: EnterUrlControllerComponents, jobManager: JobManager)(implicit ec: ExecutionContext)
   extends EnterUrlBaseController(cc) with play.api.i18n.I18nSupport {
 
-  def get(link: String): Action[AnyContent] = Action { implicit request =>
+  def get(link: String): Action[AnyContent] = Action.async { implicit request =>
     //askOpinionResourceHandler.get(request.user.id, id)
-    Ok
+    jobManager.get(link).map(ax => Ok(views.html.showimages(ax)))
   }
 
   def getLatest(counter: Int): Action[AnyContent] = ActionAuthenticated { implicit request =>
     // askOpinionResourceHandler.getLatest(request.user.id, counter)
     Ok
+  }
+
+  def enter(link:String) = Action {
+    Future{
+      jobManager.scrap(link)
+    }
+    Redirect(v1.enterurl.routes.EnterUrlController.index)
   }
 
 
@@ -38,7 +48,7 @@ class EnterUrlController @Inject()(cc: EnterUrlControllerComponents)(implicit ec
     * a path of `/`.
     */
   def index = Action { implicit request =>
-    Ok
+    Ok(views.html.index())
   }
 }
 

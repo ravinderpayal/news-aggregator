@@ -1,0 +1,5 @@
+@(images: Seq[(String,String)])
+
+@for(a <- images) {
+    <img src="@a._2" alt="@a._1" />
+}

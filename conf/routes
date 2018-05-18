@@ -4,22 +4,19 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET     /                           controllers.HomeController.index
+GET     /                           v1.enterurl.EnterUrlController.index
 GET     /aboutus                    controllers.HomeController.about
-GET     /services                   controllers.HomeController.services
-GET     /privacypolicy              controllers.HomeController.privacyPolicy
-GET     /termsandconditions         controllers.HomeController.tnc
 
-GET     /pay/paytm/:paymentId       v1.payment.PaymentController.createPaytm(paymentId)
 
-GET     /signup                           controllers.HomeController.signup
-GET     /login                           controllers.HomeController.login
+GET     /signup                     controllers.HomeController.signup
+GET     /login                      controllers.HomeController.login
 
-GET     /ask                           v1.askopinion.AskOpinionController.index
-POST     /ask                           v1.askopinion.AskOpinionController.ask
+GET     /enter                      v1.enterurl.EnterUrlController.enter(url)
 
-POST     /login                           controllers.HomeController.loginPost
-POST     /signup                           controllers.HomeController.signupPost
+GET     /get                        v1.enterurl.EnterUrlController.get(url)
+
+POST     /login                     controllers.HomeController.loginPost
+POST     /signup                    controllers.HomeController.signupPost
 # An example controller showing how to use dependency injection
 GET     /count                      controllers.CountController.count
 # An example controller showing how to write asynchronous code

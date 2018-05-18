@@ -1,4 +1,4 @@
-package v1.askopinion
+package v1.enterurl
 
 import javax.inject.Inject
 import play.api.http.FileMimeTypes

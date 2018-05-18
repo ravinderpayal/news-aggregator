@@ -12,13 +12,23 @@ import scrapper.tables._
 class DataStore {
   val db = Database.forConfig("h2mem1")
   val setup = DBIO.seq(
-    // Create the tables, including primary and foreign keys
     WebImage.webimage.schema.create
   )
+  db.run(setup)
 
-  def insert(pageLink: String, imgLink: String, imgAlt: String) = DBIO.seq(
-    WebImage.webimage forceInsertExpr (WebImage.webimage.length + 1, pageLink, imgLink, imgAlt, new Date().getTime)
-  )
+  def insert(pageLink: String, imgLink: String, imgAlt: String) = {
+    db.run(
+    DBIO.seq(
+      WebImage.webimage forceInsertExpr (WebImage.webimage.length + 1, pageLink, imgLink, imgAlt, new Date().getTime)
+    ))
+  }
+  def get(url: String) = {
+    val q =     for {
+      c <- WebImage.webimage if c.pageUrl === url
+    } yield (c.imgALT, c.imgUrl)
+
+    db.run(q.result).map(a => a)
+  }
 }
 
 

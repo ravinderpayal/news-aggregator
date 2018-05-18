@@ -1,4 +1,4 @@
-package v1.askopinion
+package v1.enterurl
 
 import java.util.UUID
 
@@ -10,7 +10,7 @@ import utils.extractors._
 /**
   * Routes and URLs to the Notification controller.
   */
-class EnterUrlRouter @Inject()(controller: AskOpinionController) extends SimpleRouter {
+class EnterUrlRouter @Inject()(controller: EnterUrlController) extends SimpleRouter {
   val prefix = "/api/v1/notification"
 
   override def routes: Routes = {
@@ -20,8 +20,8 @@ class EnterUrlRouter @Inject()(controller: AskOpinionController) extends SimpleR
     //  controller.markSeen
     //case GET(p"/get/latest/${int(counter)}") =>
     //  controller.getLatest(counter)
-    case GET(p"/${ uuid(id)}") =>
-      controller.get(id)
+    case GET(p"/$url") =>
+      controller.get(url)
   }
 
 }

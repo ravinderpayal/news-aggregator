@@ -12,6 +12,10 @@ scalaVersion := "2.12.2"
 
 libraryDependencies ++= Seq( jdbc , ehcache , ws , specs2 % Test , guice )
 
+libraryDependencies += "com.h2database" % "h2" %"1.4.196"
+
+// libraryDependencies + = "akka.cl"
+
 libraryDependencies += "net.logstash.logback" % "logstash-logback-encoder" % "4.11"
 
 val reactiveMongoVer = "0.12.6-play26"

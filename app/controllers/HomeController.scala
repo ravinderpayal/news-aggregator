@@ -47,7 +47,7 @@ class HomeController @Inject()(cc: UserControllerComponents) extends UserBaseCon
    * a path of `/`.
    */
   def index = Action {
-    Ok(views.html.index("Your new application is ready."))
+    Ok(views.html.index())
   }
   def about = Action {
     Ok(views.html.aboutus())
@@ -68,7 +68,7 @@ class HomeController @Inject()(cc: UserControllerComponents) extends UserBaseCon
         }, { form =>
           userResourceHandler.create(form)
         })
-      case Some(user) => Future.successful(Redirect(routes.HomeController.index()))
+      case Some(user) => Future.successful(Redirect(v1.enterurl.routes.EnterUrlController.index()))
     }
   }
 

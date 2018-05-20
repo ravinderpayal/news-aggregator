@@ -2,7 +2,7 @@ name := "Titanicturer"
  
 version := "1.0" 
       
-lazy val `askyouropinionscala` = (project in file(".")).enablePlugins(PlayScala)
+lazy val `titanicturer` = (project in file(".")).enablePlugins(PlayScala)
 
 resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases"
       

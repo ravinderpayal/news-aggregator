@@ -1,5 +1,11 @@
 @(images: Seq[(String,String)])
 
 @for(a <- images) {
-    <img src="@a._2" alt="@a._1" />
+    <img style="width:250px; height:250px" src="@a._2" alt="@a._1" />
+    <button>nude</button>
+    <button>violent</button>
+    <button>hospital/medical</button>
+    <button>fine(none of the other categories)</button>
+    <button>no_person in picture</button>
+    <button>multiple_person in picture</button>
 }

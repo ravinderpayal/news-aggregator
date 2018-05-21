@@ -2,7 +2,7 @@ name := "Titanicturer"
  
 version := "1.0" 
       
-lazy val `titanicturer` = (project in file(".")).enablePlugins(PlayScala)
+lazy val `Titanicturer` = (project in file(".")).enablePlugins(PlayScala)
 
 resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases"
       
@@ -34,3 +34,4 @@ libraryDependencies ++= Seq(
   "com.typesafe.slick" %% "slick-hikaricp" % "3.2.3"
 )
 libraryDependencies += "org.jsoup" % "jsoup" % "1.11.3"
+libraryDependencies += "javax.xml.bind" % "jaxb-api" % "2.3.0"

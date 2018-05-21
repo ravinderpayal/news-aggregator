@@ -3,6 +3,7 @@
  * argument is a `String` with the title of the page, the second
  * argument is an `Html` object containing the body of the page.
  *@
+@(links:Seq[(String,Long)])
 @main("Welcome to Play") {
     <form action="/enter">
         <input placeholder="Enter Url to fetch" type="url" name="url">
@@ -13,6 +14,28 @@
         <input placeholder="Enter URL to see" type="url" name="url">
         <input type="submit">
     </form>
+
+        create a table here, and add a for loop as i showed yesterday
+        <table>
+            <thead>
+                <tr>
+                    <th>Link</th>
+                    <th>Date</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            @for(link <- links){
+                <tr>
+                    <td>
+                    @link._1
+                    </td>
+                    <td>@link._2.toString</td>
+                    <td><a href="@v1.enterurl.routes.EnterUrlController.get(link._1)">View</a></td>
+                </tr>
+            }
+            </tbody>
+        </table>
 
 
 }

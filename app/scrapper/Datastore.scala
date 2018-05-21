@@ -27,7 +27,7 @@ class DataStore {
       c <- WebImage.webimage if c.pageUrl === url
     } yield (c.imgALT, c.imgUrl)
 
-    db.run(q.result).map(a => a)
+    db.run(q.distinctOn(_._1).groupBy(_._2).result).map(a => a)
   }
 }
 

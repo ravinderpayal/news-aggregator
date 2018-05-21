@@ -5,18 +5,12 @@
 
 # An example controller showing a sample home page
 GET     /                           v1.enterurl.EnterUrlController.index
-GET     /aboutus                    controllers.HomeController.about
 
-
-GET     /signup                     controllers.HomeController.signup
-GET     /login                      controllers.HomeController.login
 
 GET     /enter                      v1.enterurl.EnterUrlController.enter(url)
 
 GET     /get                        v1.enterurl.EnterUrlController.get(url)
 
-POST     /login                     controllers.HomeController.loginPost
-POST     /signup                    controllers.HomeController.signupPost
 # An example controller showing how to use dependency injection
 GET     /count                      controllers.CountController.count
 # An example controller showing how to write asynchronous code

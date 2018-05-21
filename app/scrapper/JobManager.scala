@@ -15,5 +15,9 @@ class JobManager @Inject()(dataStore: DataStore, scrapper: Scrapper)(implicit ex
   def get(link: String) = {
     dataStore.get(link).map(a => a)
   }
+  // from here we will be getting links to be shown in table
+  def get = {
+    dataStore.get.map(a => a)
+  }
 
 }

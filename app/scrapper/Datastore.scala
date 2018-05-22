@@ -19,13 +19,13 @@ class DataStore {
   def insert(pageLink: String, imgLink: String, imgAlt: String) = {
     db.run(
     DBIO.seq(
-      WebImage.webimage forceInsertExpr (WebImage.webimage.length + 1, pageLink, imgLink, imgAlt, new Date().getTime)
+      WebImage.webimage forceInsertExpr (WebImage.webimage.length + 1, pageLink, imgLink, imgAlt, new Date().getTime, "", false)
     ))
   }
   def get(url: String) = {
     val q =     for {
-      c <- WebImage.webimage if c.pageUrl === url
-    } yield (c.imgALT, c.imgUrl)
+      c <- WebImage.webimage if c.pageUrl === url && c.isAnnotated === false
+    } yield (c.id, c.imgALT, c.imgUrl)
 
     db.run(q.result).map(a => a)
   }

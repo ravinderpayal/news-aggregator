@@ -10,6 +10,10 @@ GET     /enter                      v1.enterurl.EnterUrlController.enter(url)
 
 GET     /get                        v1.enterurl.EnterUrlController.get(url)
 
+# this is the place ffrom where things start....
+
+# this endpoint is to be used for that ajax request
+POST    /annotation/:imgId/:annotation                 v1.enterurl.EnterUrlController.annotate(imgId, annotation)
 
 # An example controller showing how to use dependency injection
 GET     /count                      controllers.CountController.count

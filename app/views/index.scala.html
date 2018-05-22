@@ -15,15 +15,16 @@
         <input type="submit">
     </form>
 
-        create a table here, and add a for loop as i showed yesterday
+
         <table>
             <thead>
-                <tr>
+                <tr >
                     <th>Link</th>
                     <th>Date</th>
                     <th></th>
                 </tr>
             </thead>
+
             <tbody>
             @for(link <- links){
                 <tr>
@@ -37,5 +38,15 @@
             </tbody>
         </table>
 
+    <style>
+        table,th,td{
+            padding 30px;
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+
+
+    </style>
 
 }

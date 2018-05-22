@@ -1,11 +1,25 @@
-@(images: Seq[(String,String)])
+@(images: Seq[(Int, String,String)])
 
 @for(a <- images) {
-    <img style="width:250px; height:250px" src="@a._2" alt="@a._1" />
-    <button>nude</button>
-    <button>violent</button>
-    <button>hospital/medical</button>
-    <button>fine(none of the other categories)</button>
-    <button>no_person in picture</button>
-    <button>multiple_person in picture</button>
+    <div data-id="@a._1">
+        <img style="width:250px; height:250px" src="@a._3" alt="@a._2" />
+        <button onclick="myFunction(event)" >Nude</button>
+        <button onclick="myFunction(event)" >Violent</button>
+        <button onclick="myFunction(event)" >Hospital/Medical</button>
+        <button onclick="myFunction(event)" >fine(none of the other categories)</button>
+        <button onclick="myFunction(event)" >no_person in picture</button>
+        <button onclick="myFunction(event)" >multiple_person in picture</button>
+    </div>
+
+
+
 }
+    <script type="text/javascript">
+        function myFunction(event)
+        {
+            console.log(event.target.parentNode.getAttribute("data-id"));
+            var id=event.target.parentNode.getAttribute("data-id");
+
+        // enter ajax code here and then ping me
+        }
+    </script>

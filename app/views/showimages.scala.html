@@ -1,25 +1,40 @@
 @(images: Seq[(Int, String,String)])
 
-@for(a <- images) {
-    <div data-id="@a._1">
-        <img style="width:250px; height:250px" src="@a._3" alt="@a._2" />
-        <button onclick="myFunction(event)" >Nude</button>
-        <button onclick="myFunction(event)" >Violent</button>
-        <button onclick="myFunction(event)" >Hospital/Medical</button>
-        <button onclick="myFunction(event)" >fine(none of the other categories)</button>
-        <button onclick="myFunction(event)" >no_person in picture</button>
-        <button onclick="myFunction(event)" >multiple_person in picture</button>
-    </div>
+@main("Annotate images") {
+    @for(a <- images) {
+        <div data-id="@a._1">
+            <img style="width: 250px;
+                height: 250px" src="@a._3" alt="@a._2" />
+            <button name="c-class" type="submit" value="nude" onclick="myFunction(event)" >Nude</button>
+            <button name="c-class" type="submit" value="violent" onclick="myFunction(event)" >Violent</button>
+            <button name="c-class" type="submit" value="medical" onclick="myFunction(event)" >Hospital/Medical</button>
+            <button name="c-class" type="submit" value="fine" onclick="myFunction(event)" >fine(none of the other categories)</button>
+            <button name="c-class" type="submit" value="no_person" onclick="myFunction(event)" >no_person in picture</button>
+            <button name="c-class" type="submit" value="multiple_person" onclick="myFunction(event)" >multiple_person in picture</button>
+        </div>
 
 
+    }
+    <script type="text/javascript">
+            function myFunction(event) {
+                //console.log(event.target.parentNode.getAttribute("data-id"));
+                var id = event.target.parentNode.getAttribute("data-id");
+
+                // enter ajax code here and then ping me
+                $.ajax({
+                    url: "/annotate/" + id + "/" + event.target.getAttribute("value"),
+                    type: "post",
+                    cache: false,
+                    contentType: false,
+                    processType: false,
+                    data: id,
+                    sucess: function (data) {
+                        event.target.parentNode.removeChild(event.target)
+                    }
+                });
+
+
+            }
+    </script>
 
 }
-    <script type="text/javascript">
-        function myFunction(event)
-        {
-            console.log(event.target.parentNode.getAttribute("data-id"));
-            var id=event.target.parentNode.getAttribute("data-id");
-
-        // enter ajax code here and then ping me
-        }
-    </script>

@@ -56,6 +56,7 @@ class EnterUrlController @Inject()(cc: EnterUrlControllerComponents, jobManager:
 
   def annotate(imgId: String, annotation: String) = Action.async{
     implicit request =>
+      println(imgId, annotation)
       jobManager.annotate(imgId.toInt, annotation) map (_=>Ok)
   }
 }

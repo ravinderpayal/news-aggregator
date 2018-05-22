@@ -2,7 +2,7 @@ package scrapper
 
 import javax.inject.{Inject, Singleton}
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class JobManager @Inject()(dataStore: DataStore, scrapper: Scrapper)(implicit executionContext: ExecutionContext) {
@@ -20,4 +20,6 @@ class JobManager @Inject()(dataStore: DataStore, scrapper: Scrapper)(implicit ex
     dataStore.get.map(a => a)
   }
 
+  def annotate(imgId: Int, annotation: String) = Future.successful(true)
+  // Here we are returning a Future wrapper and not defining the logic, as I am busy, we will do this later
 }

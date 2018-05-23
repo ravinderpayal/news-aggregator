@@ -5,29 +5,33 @@
  *@
 @(links:Seq[(String,Long)])
 @main("Welcome to Titanicturer") {
-    <form action="/enter">
-        <input placeholder="Enter Url to fetch" type="url" name="url">
-        <input type="submit">
-    </form>
-    <br />
-    <form action="/get">
-        <input placeholder="Enter URL to see" type="url" name="url">
-        <input type="submit">
-    </form>
 
+    <div class="body">
+        <div align="center" id="form">
+        <label>Enter Url to Fetch Image</label>
+        <form id="form_body" action="/enter">
+            <input placeholder="Enter Url to fetch" type="url" name="url">
+            <input type="submit">
+        </form>
+        <br />
+            <label>Enter Url to See Image</label>
+        <form id="form_body" action="/get">
+            <input placeholder="Enter URL to see" type="url" name="url">
+            <input type="submit">
+        </form>
+        </div>
 
         <table>
-            <thead>
-                <tr >
+            <thead class="header">
+                <tr id="x">
                     <th>Link</th>
                     <th>Date</th>
                     <th></th>
                 </tr>
             </thead>
-
-            <tbody>
+            <tbody class="body">
             @for(link <- links){
-                <tr>
+                <tr id="y">
                     <td>
                     @link._1
                     </td>
@@ -38,14 +42,60 @@
             </tbody>
         </table>
 
+    </div>
+
     <style>
-        table,th,td{
-            padding 30px;
-            border: 1px solid black;
-            border-collapse: collapse;
-        }
 
+            input[type=url]{
+                width: 70%;
+                padding: 8px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                resize: vertical;
+            }
+            input[type=submit] {
+                background-color: #985f0d;
+                color: white;
+                padding: 12px 20px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                width: 10%;
+            }
 
+            input[type=submit]:hover {
+                background-color: #8b1014;
+            }
+
+            label{
+                background-color: #8b1014;
+                color: #FFFFFF;
+                font-size: 20px;
+                font-weight: bold;
+            }
+            table {
+                font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+                border-collapse: collapse;
+                padding-top: 20px;
+                width: 100%;
+                color: #0b0b0b;
+            }
+            table td, table th {
+                border: 1px solid #ddd;
+                padding: 8px;
+            }
+
+            table tr:nth-child(even){background-color: #f2f2f2;}
+
+            table tr:hover {background-color: #ddd;}
+
+            table th {
+                padding-top: 12px;
+                padding-bottom: 12px;
+                text-align: left;
+                background-color: #8b1014;
+                color: white;
+            }
 
     </style>
 

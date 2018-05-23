@@ -1,20 +1,28 @@
 @(images: Seq[(Int, String,String)])
 
 @main("Annotate images") {
+    <div class="row">
     @for(a <- images) {
-        <div data-id="@a._1">
-            <img style="width: 250px;
-                height: 250px" src="@a._3" alt="@a._2" />
-            <button name="c-class" type="submit" value="nude" onclick="myFunction(event)" >Nude</button>
-            <button name="c-class" type="submit" value="violent" onclick="myFunction(event)" >Violent</button>
-            <button name="c-class" type="submit" value="medical" onclick="myFunction(event)" >Hospital/Medical</button>
-            <button name="c-class" type="submit" value="fine" onclick="myFunction(event)" >fine(none of the other categories)</button>
-            <button name="c-class" type="submit" value="no_person" onclick="myFunction(event)" >no_person in picture</button>
-            <button name="c-class" type="submit" value="multiple_person" onclick="myFunction(event)" >multiple_person in picture</button>
+        <div class="column" data-id="@a._1">
+            <img  class="gallery" src="@a._3" alt="@a._2" />
+            <div class="group">
+                <div>
+                <button name="c-class" type="submit" value="nude" onclick="myFunction(event)" >Nude</button>
+                <button name="c-class" type="submit" value="violent" onclick="myFunction(event)" >Violent</button>
+                <button name="c-class" type="submit" value="medical" onclick="myFunction(event)" >Hospital/Medical</button>
+                </div>
+                <div>
+                <button name="c-class" type="submit" value="fine" onclick="myFunction(event)" >Fine(none of the other categories)</button>
+                </div>
+                <div>
+                <button name="c-class" type="submit" value="no_person" onclick="myFunction(event)" >No person in picture</button>
+                <button name="c-class" type="submit" value="multiple_person" onclick="myFunction(event)" >Multiple person in picture</button>
+                </div>
+            </div>
         </div>
-
-
     }
+    </div>
+
     <script type="text/javascript">
             function myFunction(event) {
                 //console.log(event.target.parentNode.getAttribute("data-id"));
@@ -36,5 +44,38 @@
 
             }
     </script>
+    <style>
+            button {
+                background-color: #0b0b0b;.
+                border: none;
+                color: white;
+                padding-top: 4px;
+                padding-right: 4px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 20px;
+
+            }
+            button:hover {
+                background-color: #8b1014;
+            }
+
+            img{
+                border: 1px solid #8b1014;
+                height: 400px;
+                width: 400px;
+            }
+            .column {
+                float: left;
+                width: 33.33%;
+                padding: 5px;
+            }
+            .row::after {
+                content: "";
+                clear: both;
+                display: table;
+            }
+    </style>
 
 }

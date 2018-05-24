@@ -29,6 +29,14 @@ class DataStore {
 
     db.run(q.distinctOn(_._1).groupBy(_._2).result).map(a => a)
   }
+  def get = {
+    val q =     for {
+      c <- WebImage.webimage
+    } yield (c.pageUrl, c.lastAccess)
+
+    db.run(q.distinctOn(_._1).result).map(a => a)
+  }
+
 }
 
 

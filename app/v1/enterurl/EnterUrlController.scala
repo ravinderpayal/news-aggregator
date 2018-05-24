@@ -33,7 +33,7 @@ class EnterUrlController @Inject()(cc: EnterUrlControllerComponents, jobManager:
     Ok
   }
 
-  def enter(link:String) = Action {
+  def enter(link:String) = Action {//again..can't your unplug the keyboard for once, i can't even click
     Future{
       jobManager.scrap(link)
     }
@@ -47,8 +47,11 @@ class EnterUrlController @Inject()(cc: EnterUrlControllerComponents, jobManager:
     * will be called when the application receives a `GET` request with
     * a path of `/`.
     */
-  def index = Action { implicit request =>
-    Ok(views.html.index())
+  // async means it won't wait for the actual result from database, this method will return a wrapper, and that wrapper will have a reference to result, basically a technique for designing non blocking apps
+  // ignore for now
+  def index = Action.async { implicit request =>
+    jobManager.get.map(x=>
+    Ok(views.html.index(x)))
   }
 }
 

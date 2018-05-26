@@ -20,6 +20,13 @@ class JobManager @Inject()(dataStore: DataStore, scrapper: Scrapper)(implicit ex
     dataStore.get.map(a => a)
   }
 
-  def annotate(imgId: Int, annotation: String) = Future.successful(true)
-  // Here we are returning a Future wrapper and not defining the logic, as I am busy, we will do this later
+  def annotate(imgId: Int, annotation: String) = {
+        dataStore.addAnnotation(imgId, annotation)
+  }
+
+  def blankImage(imgId: Int) = dataStore.removeImage(imgId)
+
+  def countImageAnnotations = dataStore.countImageAnnotations
+
+    // Here we are returning a Future wrapper and not defining the logic, as I am busy, we will do this later
 }

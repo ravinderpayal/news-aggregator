@@ -3,7 +3,7 @@
  * argument is a `String` with the title of the page, the second
  * argument is an `Html` object containing the body of the page.
  *@
-@(links:Seq[(String,Long)])
+@(links:Seq[(String, Option[Long], Int, Int)])
 @main("Welcome to Titanicturer") {
 
     <div class="body">
@@ -25,8 +25,8 @@
             <thead class="header">
                 <tr id="x">
                     <th>Link</th>
-                    <th>Date</th>
-                    <th></th>
+                    <th>Last Access</th>
+                    <th>Non annotated images</th>
                 </tr>
             </thead>
             <tbody class="body">
@@ -35,7 +35,8 @@
                     <td>
                     @link._1
                     </td>
-                    <td>@link._2.toString</td>
+                    <td>@link._2.getOrElse(0).toString</td>
+                    <td>@link._4 - @link._3 = @(link._4 - link._3)</td>
                     <td><a href="@v1.enterurl.routes.EnterUrlController.get(link._1)">View</a></td>
                 </tr>
             }
@@ -43,60 +44,25 @@
         </table>
 
     </div>
+    <div id="imageAnnotationCounter">
 
-    <style>
-
-            input[type=url]{
-                width: 70%;
-                padding: 8px;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-                resize: vertical;
+    </div>
+    <script type="text/javascript">
+        var imageAnnotationCounter = $("#imageAnnotationCounter");
+            function refreshAnnotationCount() {
+                $.ajax({
+                    url: "/count/image/annotations",
+                    type: "get",
+                    cache: false,
+                    contentType: false,
+                    processType: false,
+                    success: function (data) {
+                        imageAnnotationCounter.html("<div>" + data + "</div>");
+                        setTimeout(refreshAnnotationCount, 5000)
+                    }
+                });
             }
-            input[type=submit] {
-                background-color: #985f0d;
-                color: white;
-                padding: 12px 20px;
-                border: none;
-                border-radius: 4px;
-                cursor: pointer;
-                width: 10%;
-            }
-
-            input[type=submit]:hover {
-                background-color: #8b1014;
-            }
-
-            label{
-                background-color: #8b1014;
-                color: #FFFFFF;
-                font-size: 20px;
-                font-weight: bold;
-            }
-            table {
-                font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-                border-collapse: collapse;
-                padding-top: 20px;
-                width: 100%;
-                color: #0b0b0b;
-            }
-            table td, table th {
-                border: 1px solid #ddd;
-                padding: 8px;
-            }
-
-            table tr:nth-child(even){background-color: #f2f2f2;}
-
-            table tr:hover {background-color: #ddd;}
-
-            table th {
-                padding-top: 12px;
-                padding-bottom: 12px;
-                text-align: left;
-                background-color: #8b1014;
-                color: white;
-            }
-
-    </style>
+            refreshAnnotationCount();
+    </script>
 
 }

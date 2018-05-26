@@ -14,10 +14,13 @@ GET     /get                        v1.enterurl.EnterUrlController.get(url)
 # this is the place from where things start....
 
 # this endpoint is to be used for that ajax request
-POST    /annotation/:imgId/:annotation                 v1.enterurl.EnterUrlController.annotate(imgId, annotation)
+POST    /annotate/:imgId/:annotation                 v1.enterurl.EnterUrlController.annotate(imgId, annotation)
+
+POST    /blank/:imgId                                v1.enterurl.EnterUrlController.blankImage(imgId)
 
 # An example controller showing how to use dependency injection
 GET     /count                      controllers.CountController.count
+GET     /count/image/annotations          v1.enterurl.EnterUrlController.countImageAnnotations
 # An example controller showing how to write asynchronous code
 GET     /message                    controllers.AsyncController.message
 

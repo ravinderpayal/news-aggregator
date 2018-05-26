@@ -1,23 +1,34 @@
 @(images: Seq[(Int, String,String)])
 
 @main("Annotate images") {
+    <h3>Skip the images with debatable category</h3>
+    <b>Child/Children/Kid/Kids</b>:A picture should be marked as one of these only if subject clearly looks like as one of mentioned.
+    <br />
+    <b>Empty/Blank Picture(Even colored)</b>:Should me marked as blank<br />
+    <b>Nude</b>:Porn / Explicit content/ Indulged in sexual activity<br />
+    <b>Vulgar</b>:Sexually inspired text/ Vulgar poses / Signs
+
+
+
+    <!--/ Draped in cloths but poses not in accordance to a general society(Debatable*). Example: Indulged in sexual activity inside a blanket, nothing explicit visible but clearly understood to human beings.-->
+
     <div class="row">
     @for(a <- images) {
         <div class="column" data-id="@a._1">
-            <img  class="gallery" src="@a._3" alt="@a._2" />
+
+            <img onload="hide()" class="gallery" src="@a._3" alt="@a._2" />
             <div class="group">
-                <div>
                 <button name="c-class" type="submit" value="nude" onclick="myFunction(event)" >Nude</button>
+                <button name="c-class" type="submit" value="vulgar" onclick="myFunction(event)" >Vulgar</button>
                 <button name="c-class" type="submit" value="violent" onclick="myFunction(event)" >Violent</button>
                 <button name="c-class" type="submit" value="medical" onclick="myFunction(event)" >Hospital/Medical</button>
-                </div>
-                <div>
-                <button name="c-class" type="submit" value="fine" onclick="myFunction(event)" >Fine(none of the other categories)</button>
-                </div>
-                <div>
+                <button name="c-class" type="submit" value="fine_male_1" onclick="myFunction(event)" >Fine(Male-Count-1)</button>
+                <button name="c-class" type="submit" value="fine_female_1" onclick="myFunction(event)" >Fine(Female-Count-1)</button>
+                <button name="c-class" type="submit" value="only_kids_in_pic" onclick="myFunction(event)" >Only child/children</button>
+                <button name="c-class" type="submit" value="only_kids_in_pic" onclick="myFunction(event)" >Adult with child/children</button>
                 <button name="c-class" type="submit" value="no_person" onclick="myFunction(event)" >No person in picture</button>
-                <button name="c-class" type="submit" value="multiple_person" onclick="myFunction(event)" >Multiple person in picture</button>
-                </div>
+                <button name="c-class" type="submit" value="multiple_person" onclick="myFunction(event)" >Multiple 18+ individuals</button>
+                <button name="c-class" type="submit" value="multiple_person" onclick="blank(event)" >Blank</button>
             </div>
         </div>
     }
@@ -26,7 +37,9 @@
     <script type="text/javascript">
             function myFunction(event) {
                 //console.log(event.target.parentNode.getAttribute("data-id"));
-                var id = event.target.parentNode.getAttribute("data-id");
+                var parentNode = event.target.parentNode.parentNode
+                var id = parentNode.getAttribute("data-id");
+                parentNode.parentNode.removeChild(parentNode)
 
                 // enter ajax code here and then ping me
                 $.ajax({
@@ -36,46 +49,33 @@
                     contentType: false,
                     processType: false,
                     data: id,
-                    sucess: function (data) {
-                        event.target.parentNode.removeChild(event.target)
+                    success: function (data) {
+                    }
+                });
+
+
+            }
+
+            function blank(event) {
+                //console.log(event.target.parentNode.getAttribute("data-id"));
+                var parentNode = event.target.parentNode.parentNode
+                var id = parentNode.getAttribute("data-id");
+                parentNode.parentNode.removeChild(parentNode)
+
+                // enter ajax code here and then ping me
+                $.ajax({
+                    url: "/blank/" + id,
+                    type: "post",
+                    cache: false,
+                    contentType: false,
+                    processType: false,
+                    data: id,
+                    success: function (data) {
                     }
                 });
 
 
             }
     </script>
-    <style>
-            button {
-                background-color: #0b0b0b;.
-                border: none;
-                color: white;
-                padding-top: 4px;
-                padding-right: 4px;
-                text-align: center;
-                text-decoration: none;
-                display: inline-block;
-                font-size: 20px;
-
-            }
-            button:hover {
-                background-color: #8b1014;
-            }
-
-            img{
-                border: 1px solid #8b1014;
-                height: 400px;
-                width: 400px;
-            }
-            .column {
-                float: left;
-                width: 33.33%;
-                padding: 5px;
-            }
-            .row::after {
-                content: "";
-                clear: both;
-                display: table;
-            }
-    </style>
 
 }

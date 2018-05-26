@@ -56,9 +56,20 @@ class EnterUrlController @Inject()(cc: EnterUrlControllerComponents, jobManager:
 
   def annotate(imgId: String, annotation: String) = Action.async{
     implicit request =>
-      println(imgId, annotation)
       jobManager.annotate(imgId.toInt, annotation) map (_=>Ok)
   }
+
+  def blankImage(imgId: String) = Action.async{
+    implicit request =>
+      jobManager.blankImage(imgId.toInt) map (_=>Ok)
+  }
+
+  def countImageAnnotations() = Action.async{
+    implicit request =>
+      jobManager.countImageAnnotations map (a => Ok(a.toString))
+
+  }
+
 }
 
 

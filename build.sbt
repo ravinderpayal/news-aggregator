@@ -12,7 +12,8 @@ scalaVersion := "2.12.2"
 
 libraryDependencies ++= Seq( jdbc , ehcache , ws , specs2 % Test , guice )
 
-libraryDependencies += "com.h2database" % "h2" %"1.4.196"
+// https://mvnrepository.com/artifact/mysql/mysql-connector-java
+libraryDependencies += "mysql" % "mysql-connector-java" % "8.0.11"
 
 // libraryDependencies + = "akka.cl"
 
@@ -35,3 +36,14 @@ libraryDependencies ++= Seq(
 )
 libraryDependencies += "org.jsoup" % "jsoup" % "1.11.3"
 libraryDependencies += "javax.xml.bind" % "jaxb-api" % "2.3.0"
+
+enablePlugins(DockerPlugin)
+enablePlugins(JavaAppPackaging)
+
+
+dockerRepository := Some("asia.gcr.io/titanic-bcd7e")
+//dockerUsername := Some("")
+maintainer := "ravinderpayal"
+
+// dockerExposedPorts in Docker := Seq(9000,80)
+dockerUpdateLatest := true

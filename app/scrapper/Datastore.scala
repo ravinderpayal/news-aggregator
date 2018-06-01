@@ -55,10 +55,12 @@ class DataStore {
 
   def get = {
     val q = (for {
-      c <- WebImage.webimage if c.isAnnotated === false
-    } yield (c.pageUrl, c.lastAccess, c.isAnnotated)).groupBy(a => (a._1, a._3)).map{
-      case(a,b) => (a._1, b.map(_._2).max, b.map(_._3).length, b.length)
-    }
+      c <- WebImage.webimage
+    } yield (c.pageUrl, c.lastAccess, c.isAnnotated)).groupBy(a => a._1).map{
+      case(a,b) => (a, b.map(_._2).max, b.map(_._3).map(
+        anno => Case.If(anno === true).Then(1).Else(0)
+      ).sum, b.length)
+    }.sortBy((a) => (a._4 - a._3).desc)
     db.run(q.result)
   }
 

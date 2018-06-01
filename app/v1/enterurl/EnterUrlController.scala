@@ -2,20 +2,24 @@ package v1.enterurl
 
 import java.util.UUID
 
+import controllers.{routes}
 import javax.inject.{Inject, Singleton}
 import models.UserName
 import play.api.data.{Form, Forms}
 import play.api.data.Forms.{email, mapping, optional, text}
 import play.api.libs.json._
+import play.api.mvc.Results.Ok
 import play.api.mvc._
 import scrapper.{CrawlerSupervisor, NewUrl, ScrapManager}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 
+case class UserLoginForm(email:String, password: String)
+
 /**
-  *  Name:- AskOpinionController
-  *  Jobs:- Get Latest, Get Specific, Mark Seen
+  *  Name:- EnterUrlController
+  *  Jobs:- CRUD
   *
 */
 @Singleton
@@ -66,6 +70,29 @@ class EnterUrlController @Inject()(cc: EnterUrlControllerComponents, crawlerSupe
      scrapManager.countImageAnnotations map (a => Ok(a.toString))
 
   }
+
+  val userLoginForm = Form(
+    mapping(
+      "email" -> email,
+      "password" -> text(minLength = 8, maxLength = 20)
+    )(UserLoginForm.apply)(UserLoginForm.unapply)
+  )
+  def login = Action {implicit request=>
+    request.user match {
+      case None => Ok(views.html.login(userLoginForm))
+      case Some(x) => Redirect(routes.HomeController.index())
+    }
+  }
+
+  def loginPost = Action.async{implicit request =>
+    val formValidationResult = userLoginForm.bindFromRequest
+    formValidationResult.fold({ formWithErrors =>
+      Future.successful(BadRequest(views.html.login(formWithErrors)))
+    }, { form =>
+      userResourceHandler.login(form)
+    })
+  }
+
 
 }
 

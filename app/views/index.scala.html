@@ -3,7 +3,8 @@
  * argument is a `String` with the title of the page, the second
  * argument is an `Html` object containing the body of the page.
  *@
-@(links:Seq[(String, Option[Long], Int, Int)])
+@import java.util.Date
+@(links:Seq[(String, Option[Long], Option[Int], Int)])
 @main("Welcome to Titanicturer") {
 
     <div class="body">
@@ -41,8 +42,8 @@
                     <td>
                     @link._1
                     </td>
-                    <td>@link._2.getOrElse(0).toString</td>
-                    <td>@link._4 - @link._3 = @(link._4 - link._3)</td>
+                    <td>@(new Date(link._2.getOrElse(0L)))</td>
+                    <td>@link._4 - @link._3 = @(link._4 - link._3.getOrElse(0))</td>
                     <td><a href="@v1.enterurl.routes.EnterUrlController.get(link._1)">View</a></td>
                 </tr>
             }

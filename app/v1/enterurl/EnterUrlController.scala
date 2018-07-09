@@ -2,7 +2,7 @@ package v1.enterurl
 
 import java.util.UUID
 
-import controllers.{routes}
+// import controllers.{routes}
 import javax.inject.{Inject, Singleton}
 import models.UserName
 import play.api.data.{Form, Forms}
@@ -26,9 +26,18 @@ case class UserLoginForm(email:String, password: String)
 class EnterUrlController @Inject()(cc: EnterUrlControllerComponents, crawlerSupervisor: CrawlerSupervisor, scrapManager: ScrapManager)(implicit ec: ExecutionContext)
   extends EnterUrlBaseController(cc) with play.api.i18n.I18nSupport {
 
-  def get(link: String): Action[AnyContent] = Action.async { implicit request =>
+  private def loadTop()(cb: Seq[(Int, String, String, String, String)] => Result): Unit = {
+    scrapManager.get(id).map(ax => {
+
+    })
+  }
+  def get(id: Int): Action[AnyContent] = Action.async { implicit request =>
     //askOpinionResourceHandler.get(request.user.id, id)
-    scrapManager.get(link).map(ax => Ok(views.html.showimages(ax)))
+    scrapManager.get(id).map(ax => {
+      if (ax.length > 0)
+        Ok(views.html.blog(ax.head._2,ax.head._5,ax.head._3,ax.head._2))
+      else NotFound("404 not found")
+    })
   }
 
   def getLatest(counter: Int): Action[AnyContent] = ActionAuthenticated { implicit request =>
@@ -36,9 +45,13 @@ class EnterUrlController @Inject()(cc: EnterUrlControllerComponents, crawlerSupe
     Ok
   }
 
-  def enter(link:String) = Action {//again..can't your unplug the keyboard for once, i can't even click
-    crawlerSupervisor.scrapperActor ! NewUrl(link)
-    Redirect(v1.enterurl.routes.EnterUrlController.index)
+  def enter(link:String, password:String) = Action {//again..can't your unplug the keyboard for once, i can't even click
+    if (password == "helloislam") {
+      crawlerSupervisor.scrapperActor ! NewUrl(link)
+      Redirect(v1.enterurl.routes.EnterUrlController.index)
+    } else {
+      Forbidden("403:You are not authorized")
+    }
   }
 
 
@@ -51,48 +64,17 @@ class EnterUrlController @Inject()(cc: EnterUrlControllerComponents, crawlerSupe
   // async means it won't wait for the actual result from database, this method will return a wrapper, and that wrapper will have a reference to result, basically a technique for designing non blocking apps
   // ignore for now
   def index = Action.async { implicit request =>
-    scrapManager.get.map(x=>
-    Ok(views.html.index(x)))
+    scrapManager.get(0, 10).map(x=>
+      Ok(views.html.index(x))
+    )
   }
 
-  def annotate(imgId: String, annotation: String) = Action.async{
+
+  def countArticles() = Action.async{
     implicit request =>
-      scrapManager.annotate(imgId.toInt, annotation) map (_=>Ok)
-  }
-
-  def blankImage(imgId: String) = Action.async{
-    implicit request =>
-      scrapManager.blankImage(imgId.toInt) map (_=>Ok)
-  }
-
-  def countImageAnnotations() = Action.async{
-    implicit request =>
-     scrapManager.countImageAnnotations map (a => Ok(a.toString))
+     scrapManager.countArticles map (a => Ok(a.toString))
 
   }
-
-  val userLoginForm = Form(
-    mapping(
-      "email" -> email,
-      "password" -> text(minLength = 8, maxLength = 20)
-    )(UserLoginForm.apply)(UserLoginForm.unapply)
-  )
-  def login = Action {implicit request=>
-    request.user match {
-      case None => Ok(views.html.login(userLoginForm))
-      case Some(x) => Redirect(routes.HomeController.index())
-    }
-  }
-
-  def loginPost = Action.async{implicit request =>
-    val formValidationResult = userLoginForm.bindFromRequest
-    formValidationResult.fold({ formWithErrors =>
-      Future.successful(BadRequest(views.html.login(formWithErrors)))
-    }, { form =>
-      userResourceHandler.login(form)
-    })
-  }
-
 
 }
 

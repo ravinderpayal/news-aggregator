@@ -7,63 +7,57 @@ import slick.jdbc.MySQLProfile.api._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scrapper.tables._
-import slick.jdbc.meta.MTable
 
 import scala.concurrent.duration.{Duration}
 import scala.concurrent.{Await, Future}
 
 @Singleton
 class DataStore {
+
   val db = Database.forConfig("mysql")
 
-  val tables = List(WebImage.webimage, WebImageAnnotation.webimageAnnotation, Annotations.annotations)
+
+  val tables = List(Article.article)
   val setup = DBIO.sequence(
     tables.map(_.schema.create.asTry)
   )
 
-  Await.result(db.run(setup), Duration.Inf)
+  Await.result(db.run(setup).map(println(_)), Duration.Inf)
 
-  def insert(pageLink: String, imgLink: String, imgAlt: String) = {
-    db.run(
-      DBIO.seq(
-        WebImage.webimage.map(a => (a.pageUrl, a.imgUrl, a.imgALT, a.lastAccess, a.annotation, a.isAnnotated)) += ((pageLink, imgLink, imgAlt, new Date().getTime, "", false))
-    )).map(a => println(a))
-  }
-  def addAnnotation(imgId: Int, annotation: String) = {
-    db.run(
-      DBIO.seq(
-        WebImageAnnotation.webimageAnnotation forceInsertExpr (imgId, new Date().getTime, annotation),
-        WebImage.webimage.filter(_.id === imgId).map(a => (a.annotation,a.isAnnotated,a.lastAccess)).update((annotation, true, new Date().getTime))
-      ))
+  def insert(pageLink: String, imgLink: String, imgAlt: String, title: String, article: String) = {
+    db.run(DBIO.seq(Article.article.map(a => (a.pageUrl, a.imgUrl, a.imgALT, a.title, a.article, a.createdAt)) += ((pageLink, imgLink, imgAlt, title, article, new Date().getTime)))).map(a => println(a))
   }
 
-  def removeImage(imgId: Int) = {
-    db.run(WebImage.webimage.filter(_.id === imgId).delete)
+  def upsert(pageLink: String, imgLink: String, imgAlt: String, title: String, article: String) = {
+    db.run(Article.article.insertOrUpdate((0, pageLink, imgLink, imgAlt, title, article, new Date().getTime)))
   }
 
-  def get(url: String) = {
+  def removeArticle(imgId: Int) = {
+    db.run(Article.article.filter(_.id === imgId).delete)
+  }
+
+  def get(id: Int) = {
     val q =     for {
-      c <- WebImage.webimage if c.pageUrl === url && c.isAnnotated === false
-    } yield (c.id, c.imgALT, c.imgUrl)
+      c <- Article.article if c.id === id
+    } yield (c.id, c.imgALT, c.imgUrl, c.title, c.article)
 
     db.run(q.result).map(a => a)
   }
 
-  def countImageAnnotations = {
-    db.run(WebImageAnnotation.webimageAnnotation.length.result)
+  def get(link: String, lastCrawl: Long) = {
+    db.run(Article.article.filter(f => f.pageUrl === link && f.createdAt > lastCrawl).map(f => f.pageUrl).result)
   }
 
-  def get = {
-    val q = (for {
-      c <- WebImage.webimage
-    } yield (c.pageUrl, c.lastAccess, c.isAnnotated)).groupBy(a => a._1).map{
-      case(a,b) => (a, b.map(_._2).max, b.map(_._3).map(
-        anno => Case.If(anno === true).Then(1).Else(0)
-      ).sum, b.length)
-    }.sortBy((a) => (a._4 - a._3).desc)
+  def countArticles = {
+    db.run(Article.article.length.result)
+  }
+
+  def get(skipN: Int, pageSize: Int) = {
+    val q = for {
+      c <- Article.article
+    } yield (c.id, c.imgALT, c.imgUrl, c.title, c.article)
     db.run(q.result)
   }
-
 }
 
 

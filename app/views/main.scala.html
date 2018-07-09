@@ -4,22 +4,138 @@
  * two arguments, a `String` for the title of the page and an `Html`
  * object to insert into the body of the page.
  *@
+
 @(title: String)(content: Html)
 
-
-<!DOCTYPE html>
-<html lang="en">
-
-
+<html lang="en" >
     <head>
         <meta charset="UTF-8">
-        <title>@title</title>
-
-            <!-- Main css -->
-        <link rel="stylesheet" href="@routes.Assets.versioned("style.css")">
-        <script src="@routes.Assets.versioned("jquery-1.10.2.min.js")" type="text/javascript"></script>
+        <title>@title | PMC News</title>
+        <link rel='stylesheet prefetch' href='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css'>
+        <link rel='stylesheet prefetch' href='http://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css'>
+        <link rel="stylesheet" href="/assets/css/style.css">
+        <link href="https://fonts.googleapis.com/css?family=Oswald" rel="stylesheet">
     </head>
     <body>
-        @content
+        <section class="blog-main-section" style="background-image: url('/assets/makka.png');background-size:cover; ">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="carousel slide" data-ride="carousel" id="quote-carousel">
+                            <!-- Carousel Slides / Quotes -->
+                            <div class="carousel-inner">
+                                <!-- Quote 1 -->
+                                <div class="item active">
+                                    <blockquote>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="blog-image">
+                                                    <img src="/assets/pmc-2-intro.jpg" class="img-responsive"/>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="bolg-text">
+                                                    <h1>BLOG HEADING</h1>
+                                                    <h2>BLOG TITLE OR A HEADLINE OF THE BLOG</h2>
+                                                    <p class="text-justify">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                                                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                                                        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                                                        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+                                                        cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+                                                        proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                                                </div>
+                                                <button class="btn btn-default btn-lg">READ MORE</button>
+                                                <div class="clearfix"></div>
+                                                <br />
+                                                <p class="col-md-6 no-padding">Publish on : 27 June,2018</p>
+                                                <p class="col-md-6 no-padding">Publish by : Author Name</p>
+                                            </div>
+
+                                        </div>
+
+                                    </blockquote>
+                                </div>
+                                <!-- Quote 2 -->
+                                <div class="item">
+                                    <blockquote>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="blog-image">
+                                                    <img src="/assets/pmc-2-intro.jpg" class="img-responsive"/>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="bolg-text">
+                                                    <h1>BLOG HEADING</h1>
+                                                    <h2>BLOG TITLE OR A HEADLINE OF THE BLOG</h2>
+                                                    <p class="text-justify">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                                                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                                                        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                                                        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+                                                        cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+                                                        proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                                                </div>
+                                                <button class="btn btn-default btn-lg">READ MORE</button>
+                                                <div class="clearfix"></div>
+                                                <br />
+                                                <p class="col-md-6 no-padding">Publish on : 27 June,2018</p>
+                                                <p class="col-md-6 no-padding">Publish by : Author Name</p>
+                                            </div>
+
+                                        </div>
+                                    </blockquote>
+                                </div>
+                                <!-- Quote 3 -->
+                                <div class="item">
+                                    <blockquote>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="blog-image">
+                                                    <img src="/assets/pmc-2-intro.jpg" class="img-responsive"/>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="bolg-text">
+                                                    <h1>BLOG HEADING</h1>
+                                                    <h2>BLOG TITLE OR A HEADLINE OF THE BLOG</h2>
+                                                    <p class="text-justify">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                                                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                                                        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                                                        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+                                                        cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+                                                        proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                                                </div>
+                                                <button class="btn btn-default btn-lg">READ MORE</button>
+                                                <div class="clearfix"></div>
+                                                <br />
+                                                <p class="col-md-6 no-padding">Publish on : 27 June,2018</p>
+                                                <p class="col-md-6 no-padding">Publish by : Author Name</p>
+                                            </div>
+
+                                        </div>
+                                    </blockquote>
+                                </div>
+                            </div>
+                            <!-- Bottom Carousel Indicators -->
+                            <ol class="carousel-indicators">
+                                <li data-target="#quote-carousel" data-slide-to="0" class="active"><img class="img-responsive " src="/assets/pmc-2-intro-th.jpg" alt=""></li>
+                                <li data-target="#quote-carousel" data-slide-to="1"><img class="img-responsive" src="/assets/pmc-2-intro-th.jpg" alt=""></li>
+                                <li data-target="#quote-carousel" data-slide-to="2"><img class="img-responsive" src="/assets/pmc-2-intro-th.jpg" alt=""></li>
+                            </ol>
+
+                            <!-- Carousel Buttons Next/Prev -->
+                            <a data-slide="prev" href="#quote-carousel" class="left carousel-control"><i class="fa fa-chevron-left"></i></a>
+                            <a data-slide="next" href="#quote-carousel" class="right carousel-control"><i class="fa fa-chevron-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <!---
+                    <a class="btn btn-primary" href="http://thecodeblock.com/create-a-quote-testimonial-slider-using-bootstrap-carousel"><i class="fa fa-arrow-left"></i> Back to Article</a>
+                -->
+            </div>
+        </section>
+            @content
+        <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+        <script src='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js'></script>
     </body>
 </html>

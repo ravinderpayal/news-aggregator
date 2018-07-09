@@ -20,8 +20,8 @@ class EnterUrlRouter @Inject()(controller: EnterUrlController) extends SimpleRou
     //  controller.markSeen
     //case GET(p"/get/latest/${int(counter)}") =>
     //  controller.getLatest(counter)
-    case GET(p"/$url") =>
-      controller.get(url)
+    case GET(p"/${int(id)}") =>
+      controller.get(id)
   }
 
 }

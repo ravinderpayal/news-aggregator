@@ -4,72 +4,32 @@
  * argument is an `Html` object containing the body of the page.
  *@
 @import java.util.Date
-@(links:Seq[(String, Option[Long], Option[Int], Int)])
+@(x: Seq[(Int, String, String, String, String)])
 @main("Welcome to Titanicturer") {
-
-    <div class="body">
-        <div align="center" id="form">
-        <label>Enter Url to Fetch Image</label>
-        <form id="form_body" action="/enter">
-            <input placeholder="Enter Url to fetch" type="url" name="url">
-            <input type="submit">
-        </form>
-        <br />
-        <label>Enter csv file containing URLs in frst column</label>
-        <form id="form_body" action="/v1/file/upload" method="post" enctype="multipart/form-data">
-            <input placeholder="Enter Url to fetch" type="file" name="file">
-            <input type="submit">
-        </form>
-
-            <label>Enter Url to See Image</label>
-        <form id="form_body" action="/get">
-            <input placeholder="Enter URL to see" type="url" name="url">
-            <input type="submit">
-        </form>
+    <div class="container">
+    <h1>No of articles: @x.length</h1>
+    <div class="row">
+        @for(y <-x ) {
+        <div class="col-md-12">
+            <h3>
+                <a href="/news/@y._1">
+                    @y._2
+                </a>
+            </h3>
+            <p class="lead">
+                @if(y._3.length > 0){
+                    <img width="150px" height="150px" src="@y._3" align="left" title="@y._2" alt="@y._2">
+                }
+                @if(y._5.length <= 512){
+                    @y._5
+                } else{
+                    @y._5.take(y._5.lastIndexWhere(_.isWhitespace, 513)).trim
+                    <a href="/news/@y._1">...Read more</a>
+                }
+            </p>
+            <hr>
         </div>
-
-        <table>
-            <thead class="header">
-                <tr id="x">
-                    <th>Link</th>
-                    <th>Last Access</th>
-                    <th>Non annotated images</th>
-                </tr>
-            </thead>
-            <tbody class="body">
-            @for(link <- links){
-                <tr id="y">
-                    <td>
-                    @link._1
-                    </td>
-                    <td>@(new Date(link._2.getOrElse(0L)))</td>
-                    <td>@link._4 - @link._3 = @(link._4 - link._3.getOrElse(0))</td>
-                    <td><a href="@v1.enterurl.routes.EnterUrlController.get(link._1)">View</a></td>
-                </tr>
-            }
-            </tbody>
-        </table>
-
+        }
     </div>
-    <div id="imageAnnotationCounter">
-
     </div>
-    <script type="text/javascript">
-        var imageAnnotationCounter = $("#imageAnnotationCounter");
-            function refreshAnnotationCount() {
-                $.ajax({
-                    url: "/count/image/annotations",
-                    type: "get",
-                    cache: false,
-                    contentType: false,
-                    processType: false,
-                    success: function (data) {
-                        imageAnnotationCounter.html("<div>" + data + "</div>");
-                        setTimeout(refreshAnnotationCount, 5000)
-                    }
-                });
-            }
-            refreshAnnotationCount();
-    </script>
-
 }

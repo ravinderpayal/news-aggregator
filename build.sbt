@@ -15,6 +15,8 @@ libraryDependencies ++= Seq( jdbc , ehcache , ws , specs2 % Test , guice )
 // https://mvnrepository.com/artifact/mysql/mysql-connector-java
 libraryDependencies += "mysql" % "mysql-connector-java" % "8.0.11"
 
+libraryDependencies += "io.lemonlabs" %% "scala-uri" % "1.1.4"
+
 // libraryDependencies + = "akka.cl"
 
 libraryDependencies += "net.logstash.logback" % "logstash-logback-encoder" % "4.11"
@@ -23,9 +25,12 @@ val reactiveMongoVer = "0.12.6-play26"
 libraryDependencies ++= Seq(
   "org.reactivemongo" %% "play2-reactivemongo" % reactiveMongoVer
 )
+
+
 libraryDependencies ++= Seq(
   "com.pauldijou" %% "jwt-play" % "0.16.0"
 )
+
 libraryDependencies += "com.typesafe.play" %% "play-mailer" % "6.0.1"
 libraryDependencies += "com.typesafe.play" %% "play-mailer-guice" % "6.0.1"
 

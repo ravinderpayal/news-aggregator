@@ -1,0 +1,89 @@
+@(title:String, content: String, imgSrc: String, imgAlt: String)
+@main(title) {
+        <section class="article-full">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+
+                        <div class="full-content" style="border: 1px solid #ccc;border-top:none;border-radius: 4px;padding: 10px 20px;">
+                            <h1>@title</h1>
+                            <!--<div class="row">
+                                <p class="col-md-6">Published on: 21st June,2018</p>
+                                <p class="col-md-6">Published by: Author Name</p>
+                            </div>-->
+                            <div align="center">
+                                <img style="width: 100%;" src="@imgSrc" alt="@imgAlt" class="img-responsive" />
+                                <br />
+                                <p>@imgAlt</p>
+                            </div>
+                            <p class="text-justify lead">
+                                @content</p>
+                        </div>
+                    </div>
+                    <!--
+                    <div class="col-md-3" style="border: 1px solid #ccc;">
+                        <div class="latest-article">
+                            <div class="row">
+                                <div class="latest" style="background: green;">
+                                    <h4 style="margin-top: 0px;margin-bottom: 0px;padding: 10px;color: #fff;">LASTEST ARTICLE</h4>
+                                </div>
+                                <div class="article-list">
+                                    <ul type="square">
+                                        <li>Latest articel title goes here</li>
+                                        <li>Latest articel title goes here</li>
+                                        <li>Latest articel title goes here</li>
+                                        <li>Latest articel title goes here</li>
+                                        <li>Latest articel title goes here</li>
+                                        <li>Latest articel title goes here</li>
+                                        <li>Latest articel title goes here</li>
+                                        <li>Latest articel title goes here</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="latest-article">
+                            <div class="row">
+                                <div class="latest" style="background: green;">
+                                    <h4 style="margin-top: 0px;margin-bottom: 0px;padding: 10px;color: #fff;">POPULAR ARTICLE</h4>
+                                </div>
+                                <div class="article-list">
+                                    <ul type="square">
+                                        <li>Popular articel title goes here</li>
+                                        <li>Popular articel title goes here</li>
+                                        <li>Popular articel title goes here</li>
+                                        <li>Popular articel title goes here</li>
+                                        <li>Popular articel title goes here</li>
+                                        <li>Popular articel title goes here</li>
+                                        <li>Popular articel title goes here</li>
+                                        <li>Popular articel title goes here</li>
+                                        <li>Popular articel title goes here</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="latest-article">
+                            <div class="row">
+                                <div class="latest" style="background: green;">
+                                    <h4 style="margin-top: 0px;margin-bottom: 0px;padding: 10px;color: #fff;">POPULAR AUTHORS</h4>
+                                </div>
+                                <div class="article-list">
+                                    <ul type="square">
+                                        <li>Popular Author Name goes here</li>
+                                        <li>Popular Author Name goes here</li>
+                                        <li>Popular Author Name goes here</li>
+                                        <li>Popular Author Name goes here</li>
+                                        <li>Popular Author Name goes here</li>
+                                        <li>Popular Author Name goes here</li>
+                                        <li>Popular Author Name goes here</li>
+                                        <li>Popular Author Name goes here</li>
+                                        <li>Popular Author Name goes here</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                    -->
+                </div>
+            </div>
+        </section>
+}

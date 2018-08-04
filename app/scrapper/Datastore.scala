@@ -25,7 +25,7 @@ class DataStore {
   Await.result(db.run(setup).map(println(_)), Duration.Inf)
 
   def insert(pageLink: String, imgLink: String, imgAlt: String, title: String, article: String) = {
-    db.run(DBIO.seq(Article.article.map(a => (a.pageUrl, a.imgUrl, a.imgALT, a.title, a.article, a.createdAt)) += ((pageLink, imgLink, imgAlt, title, article, new Date().getTime)))).map(a => println(a))
+    db.run(DBIO.seq(Article.article.map(a => (a.sourceUrl, a.imgUrl, a.imgALT, a.title, a.article, a.createdAt)) += ((pageLink, imgLink, imgAlt, title, article, new Date().getTime)))).map(a => println(a))
   }
 
   def upsert(pageLink: String, imgLink: String, imgAlt: String, title: String, article: String) = {
@@ -45,7 +45,7 @@ class DataStore {
   }
 
   def get(link: String, lastCrawl: Long) = {
-    db.run(Article.article.filter(f => f.pageUrl === link && f.createdAt > lastCrawl).map(f => f.pageUrl).result)
+    db.run(Article.article.filter(f => f.sourceUrl === link && f.createdAt > lastCrawl).map(f => f.sourceUrl).result)
   }
 
   def countArticles = {

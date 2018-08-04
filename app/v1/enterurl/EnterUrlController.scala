@@ -26,11 +26,11 @@ case class UserLoginForm(email:String, password: String)
 class EnterUrlController @Inject()(cc: EnterUrlControllerComponents, crawlerSupervisor: CrawlerSupervisor, scrapManager: ScrapManager)(implicit ec: ExecutionContext)
   extends EnterUrlBaseController(cc) with play.api.i18n.I18nSupport {
 
-  private def loadTop()(cb: Seq[(Int, String, String, String, String)] => Result): Unit = {
+  /*private def loadTop()(cb: Seq[(Int, String, String, String, String)] => Result): Unit = {
     scrapManager.get(id).map(ax => {
 
     })
-  }
+  }*/
   def get(id: Int): Action[AnyContent] = Action.async { implicit request =>
     //askOpinionResourceHandler.get(request.user.id, id)
     scrapManager.get(id).map(ax => {

@@ -17,7 +17,7 @@ class Article(tag: Tag) extends Table[(Int, String, String, String, String, Stri
   def createdAt = column[Long]("TIMESTAMP")
   def addedAt = column[Long]("TIMESTAMP")
   // Every table needs a * projection with the same type as the table's type parameter
-  def * = (id, pageUrl, imgUrl, imgALT, title, article, createdAt)
+  def * = (id, sourceUrl, imgUrl, imgALT, title, article, createdAt)
 }
 
 object Article {

@@ -11,7 +11,7 @@ import io.lemonlabs.uri.Url
 
 @Singleton
 class Scrapper {
-  def scrap(link: String):Option[(ScrappedArticle, mutable.Buffer[String])] = {
+  def scrap(link: String):Option[(ScrappedArticle, List[String])] = {
     try {
       val document = Jsoup.connect(link).get()
       //val post_img = document.select(".content .post_img a.imagecache-imagelink")
@@ -33,7 +33,7 @@ class Scrapper {
       val img_description = if (post_img_description.size() > 0) post_img_description.get(0).text else ""
       val all_links = document.select("a").asScala.map(_.absUrl("href"))
 
-      Some((ScrappedArticle(link, (img_src, img_description), title, text), all_links))
+      Some((ScrappedArticle(link, (img_src, img_description), title, text), all_links.toList))
     } catch {
       case e: Exception =>
         println("/*************************Handled Exception**********/\n\n")
@@ -72,11 +72,11 @@ class ScrapperActor(scrapper: Scrapper, crawlerSupervisor: CrawlerSupervisor) ex
       }
   }
 
-  def onScrapped(scrapped:(String, List[String]), url: String) = {
+  def onScrapped(scrapped:(ScrappedArticle, List[String]), url: String) = {
     if (url.contains ("/en/content/") )
       crawlerSupervisor.scrapManagerActor ! scrapped._1
     scrapped._2.foreach (url2 => {
-      crawlerSupervisor.scrapperActor ! NewUrl (url2)
+      crawlerSupervisor.scrapManagerActor ! NewUrl (url2)
     })
   }
 

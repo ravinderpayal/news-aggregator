@@ -23,10 +23,10 @@ class ScrapManager @Inject()(dataStore: DataStore, scrapper: Scrapper)(implicit 
   def get(id: Int) = {
     dataStore.get(id).map(a => a)
   }
-
+  /*
   def top4 = {
     dataStore.get().map(a => a)
-  }
+  }*/
 
   // from here we will be getting links to be shown in table
   def get(skipN: Int, pageSize: Int) = {
@@ -73,7 +73,7 @@ class ScrapManagerActor(scrapManager: ScrapManager, superVisor: CrawlerSuperviso
     case b:ScrappedArticle =>
       scrapManager.onScrapped(b)
     case NewUrl(url) =>
-      scrapManager.shouldICrawl(url).foreach(if (_) superVisor.scrapperActor ! NewUrl(url) else println("already crawled: " + url))
+      scrapManager.shouldICrawl(url).map(if (_) superVisor.scrapperActor ! NewUrl(url) else println("already crawled: " + url))
     case _ => superVisor.supervisorActor ! a // TODO: wrap it into unsupported
   }
 

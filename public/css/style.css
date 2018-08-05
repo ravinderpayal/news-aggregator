@@ -72,3 +72,9 @@ body{
     font-size: 16px;
     -moz-outline-style: none !important;
 }
+
+
+.page img {
+    vertical-align: middle;
+    max-width: 100%;
+}

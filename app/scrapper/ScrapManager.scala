@@ -3,7 +3,7 @@ package scrapper
 import java.util.Date
 
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
-import io.lemonlabs.uri.DomainName
+import io.lemonlabs.uri.{DomainName, Url}
 import javax.inject.{Inject, Singleton}
 
 import scala.collection.mutable
@@ -79,19 +79,26 @@ class ScrapManagerActor(scrapManager: ScrapManager, superVisor: CrawlerSuperviso
     case b:ScrappedArticle =>
       scrapManager.onScrapped(b)
     case NewUrl(url) =>
-      //if (!localMutableArray.contains(url)) {
-      //  localMutableArray.+=(url)
-        scrapManager.shouldICrawl(url).onComplete {
-          case Success(s) if s => superVisor.scrapperActor ! NewUrl(url)
-          case Failure(a) =>
-            println(a)
-            println(url + "problem checking this URL")
-            //superVisor.scrapManagerActor ! NewUrl(url)
-          case x =>
-            println(x)
-            println(url + " can't bne crawled")
-        }
-      //}
+      val parsed = Url.parse(url)
+      val path = parsed.path
+      parsed.hostOption match {
+        case Some(host) =>
+          host.apexDomain match {
+            case Some(domain) =>
+              scrapManager.shouldICrawl(url).onComplete {
+                case Success(s) if s => superVisor.scrapperActor ! NewUrl(url)
+                case Failure(a) =>
+                  println(a)
+                  println(url + "problem checking this URL")
+                //superVisor.scrapManagerActor ! NewUrl(url)
+                case x =>
+                  println(x)
+                  println(url + " can't bne crawled")
+              }
+            case None =>
+          }
+        case None =>
+      }
     case _ => superVisor.supervisorActor ! a // TODO: wrap it into unsupported
   }
 

@@ -70,23 +70,11 @@ object ScrapperActor {
 class ScrapperActor (scrapper: Scrapper, crawlerSupervisor: CrawlerSupervisor) (implicit ec: ExecutionContext) extends Actor {
   def receive = {
     case NewUrl(url) =>
-      // println("scraping new URL")
-      val parsed = Url.parse(url)
-      val path = parsed.path
-      parsed.hostOption match {
-        case Some(host) =>
-          host.apexDomain match {
-            case Some(domain) =>
-              // println(domain)
-              scrapper.scrap(domain, url) map {
-                case Some(scrapped) =>
-                    onScrapped(scrapped, url)
-                case None => // println("Bad luck...found nothing")
-              }
-            case None => println("Problem with apex domain")
-        }
-        case None => println("Problem with host name")
-    }
+      scrapper.scrap(domain, url) map {
+        case Some(scrapped) =>
+            onScrapped(scrapped, url)
+        case None => // println("Bad luck...found nothing")
+      }
   }
 
   def onScrapped(scrapped:(Option[ScrappedArticle], List[String]), url: String) = {

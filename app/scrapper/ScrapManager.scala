@@ -3,18 +3,21 @@ package scrapper
 import java.util.Date
 
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
+import io.lemonlabs.uri.DomainName
 import javax.inject.{Inject, Singleton}
 
+import scala.collection.mutable
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
-case class ScrappedArticle(pageLink: String, image:(String, String), title: String, article: String)
+case class ScrappedArticle(domainName: String, pageLink: String, favicon: String, image:(String, String), title: String, excerpt: String, article: String, createdAt: Long)
 
 @Singleton
 class ScrapManager @Inject()(dataStore: DataStore, scrapper: Scrapper)(implicit executionContext: ExecutionContext) {
 
   def onScrapped(scrapped: ScrappedArticle): Unit = {
     // println("Scrapped is called")
-    dataStore.upsert(scrapped.pageLink,scrapped.image._1, scrapped.image._2, scrapped.title, scrapped.article)
+    dataStore.upsert(domainName = scrapped.domainName, sourceUrl = scrapped.pageLink, sourceLogo = scrapped.favicon, imgLink = scrapped.image._1, imgAlt = scrapped.image._2, title = scrapped.title, excerpt = scrapped.excerpt, article = scrapped.article, createdAt = scrapped.createdAt).map(f=> println(f))
   }
   def shouldICrawl(url: String): Future[Boolean] = {
     dataStore.get(url, new Date().getTime - 43200000).map(_.nonEmpty)
@@ -30,8 +33,10 @@ class ScrapManager @Inject()(dataStore: DataStore, scrapper: Scrapper)(implicit 
 
   // from here we will be getting links to be shown in table
   def get(skipN: Int, pageSize: Int) = {
-    dataStore.get(skipN, pageSize).map(a => a)
+    dataStore.get(skipN, pageSize)
   }
+
+  def getCounter = scrapper.counter
 
 
   def countArticles = dataStore.countArticles
@@ -69,11 +74,21 @@ object ScrapManagerActor {
 }
 
 class ScrapManagerActor(scrapManager: ScrapManager, superVisor: CrawlerSupervisor)(implicit executionContext: ExecutionContext) extends Actor {
+  val localMutableArray = mutable.MutableList()
   def receive = (a: Any) => a match {
     case b:ScrappedArticle =>
       scrapManager.onScrapped(b)
     case NewUrl(url) =>
-      scrapManager.shouldICrawl(url).map(if (_) superVisor.scrapperActor ! NewUrl(url) else println("already crawled: " + url))
+      //if (!localMutableArray.contains(url)) {
+      //  localMutableArray.+=(url)
+        scrapManager.shouldICrawl(url).onComplete {
+          case Success(s) if(!s)=> superVisor.scrapperActor ! NewUrl(url)
+          case Failure(a) =>
+            println(a)
+            println(url + "is already crawled")
+          case x => println(x)
+        }
+      //}
     case _ => superVisor.supervisorActor ! a // TODO: wrap it into unsupported
   }
 

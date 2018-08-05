@@ -40,6 +40,8 @@ libraryDependencies ++= Seq(
   "com.typesafe.slick" %% "slick-hikaricp" % "3.2.3"
 )
 libraryDependencies += "org.jsoup" % "jsoup" % "1.11.3"
+libraryDependencies += "com.github.ghostdogpr" % "readability4s" % "1.0.9"
+
 libraryDependencies += "javax.xml.bind" % "jaxb-api" % "2.3.0"
 
 enablePlugins(DockerPlugin)

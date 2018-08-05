@@ -55,6 +55,7 @@ class EnterUrlController @Inject()(cc: EnterUrlControllerComponents, crawlerSupe
   }
 
 
+
   /**
     * Create an Action to render an HTML page with a welcome message.
     * The configuration in the `routes` file means that this method
@@ -65,7 +66,7 @@ class EnterUrlController @Inject()(cc: EnterUrlControllerComponents, crawlerSupe
   // ignore for now
   def index = Action.async { implicit request =>
     scrapManager.get(0, 10).map(x=>
-      Ok(views.html.index(x))
+      Ok(views.html.index(x, scrapManager.getCounter))
     )
   }
 

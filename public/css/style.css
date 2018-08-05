@@ -60,3 +60,15 @@ body{
 .no-padding{padding:0px;}
 .article-full{background: #eee;padding:20px 0px;}
 .article-list ul li{line-height: 30px;}
+
+
+.page p {
+    margin: 20px 0 0 0;
+    color: #051323;
+    line-height: 1.65;
+    font-family: 'Open Sans',sans-serif;
+    outline: 0 !important;
+    word-wrap: break-word;
+    font-size: 16px;
+    -moz-outline-style: none !important;
+}

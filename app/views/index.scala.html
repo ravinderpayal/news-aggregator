@@ -4,28 +4,31 @@
  * argument is an `Html` object containing the body of the page.
  *@
 @import java.util.Date
-@(x: Seq[(Int, String, String, String, String)])
+@(x: Seq[(Int, String, String, String, String)], counter: Int)
 @main("Welcome to Titanicturer") {
     <div class="container">
-    <h1>No of articles: @x.length</h1>
+    <h1>No of articles: @x.length / @counter</h1>
     <div class="row">
         @for(y <-x ) {
         <div class="col-md-12">
             <h3>
                 <a href="/news/@y._1">
-                    @y._2
+                   @y._2
                 </a>
             </h3>
             <p class="lead">
                 @if(y._3.length > 0){
                     <img width="150px" height="150px" src="@y._3" align="left" title="@y._2" alt="@y._2">
                 }
-                @if(y._5.length <= 512){
-                    @y._5
-                } else{
-                    @y._5.take(y._5.lastIndexWhere(_.isWhitespace, 513)).trim
-                    <a href="/news/@y._1">...Read more</a>
-                }
+                @y._5&nbsp;&nbsp;<a href="/news/@y._1">Read</a>
+                @*
+                 *if(y._5.length <= 512){
+                 *    @Html(y._5)
+                 *} else{
+                 *    @Html(y._5.take(y._5.lastIndexWhere(_.isWhitespace, 513)).trim)
+                 *
+                 *}
+                 *@
             </p>
             <hr>
         </div>

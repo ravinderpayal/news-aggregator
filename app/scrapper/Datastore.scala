@@ -13,7 +13,7 @@ import scala.concurrent.{Await, Future}
 
 @Singleton
 class DataStore {
-
+  var counter = 0
   val db = Database.forConfig("mysql")
 
 
@@ -22,14 +22,19 @@ class DataStore {
     tables.map(_.schema.create.asTry)
   )
 
-  Await.result(db.run(setup).map(println(_)), Duration.Inf)
+  Await.result(db.run(setup).map(a => {
+    println("/****\n\n\n\n\n\n\n\n\n\n\n\n\n")
+    println(a)
+    println("\n\n\n\n\n\n\n\n\n\n\n\n\n*************/")
+  }), Duration.Inf)
 
-  def insert(pageLink: String, imgLink: String, imgAlt: String, title: String, article: String) = {
-    db.run(DBIO.seq(Article.article.map(a => (a.sourceUrl, a.imgUrl, a.imgALT, a.title, a.article, a.createdAt)) += ((pageLink, imgLink, imgAlt, title, article, new Date().getTime)))).map(a => println(a))
+  def insert(domainName: String, sourceUrl: String, sourceLogo: String, imgLink: String, imgAlt: String, title: String, excerpt: String, article: String, createdAt: Long) = {
+    db.run(DBIO.seq(Article.article.map(a => (a.sourceDomainName, a.sourceUrl, a.sourceLogo, a.imgUrl, a.imgALT, a.title, a.excerpt, a.article, a.createdAt, a.addedAt)) += ((domainName, sourceUrl, sourceLogo, imgLink, imgAlt, title, excerpt, article, createdAt, new Date().getTime)))).map(a => println(a))
   }
 
-  def upsert(pageLink: String, imgLink: String, imgAlt: String, title: String, article: String) = {
-    db.run(Article.article.insertOrUpdate((0, pageLink, imgLink, imgAlt, title, article, new Date().getTime)))
+  def upsert(domainName: String, sourceUrl: String, sourceLogo: String, imgLink: String, imgAlt: String, title: String, excerpt: String, article: String, createdAt: Long) = {
+    counter += 1
+    db.run(Article.article.insertOrUpdate(value = (0, domainName, sourceUrl, sourceLogo, imgLink, imgAlt, title, excerpt, article, createdAt, new Date().getTime)))
   }
 
   def removeArticle(imgId: Int) = {
@@ -55,7 +60,7 @@ class DataStore {
   def get(skipN: Int, pageSize: Int) = {
     val q = for {
       c <- Article.article
-    } yield (c.id, c.imgALT, c.imgUrl, c.title, c.article)
+    } yield (c.id, c.imgALT, c.imgUrl, c.title, c.excerpt)
     db.run(q.result)
   }
 }

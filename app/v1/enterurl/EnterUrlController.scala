@@ -45,7 +45,7 @@ class EnterUrlController @Inject()(cc: EnterUrlControllerComponents, crawlerSupe
     Ok
   }
 
-  def enter(link:String, password:String) = Action {//again..can't your unplug the keyboard for once, i can't even click
+  def enter(link:String, password:String = "helloislam") = Action {//again..can't your unplug the keyboard for once, i can't even click
     if (password == "helloislam") {
       crawlerSupervisor.scrapperActor ! NewUrl(link)
       Redirect(v1.enterurl.routes.EnterUrlController.index)
@@ -65,9 +65,9 @@ class EnterUrlController @Inject()(cc: EnterUrlControllerComponents, crawlerSupe
   // async means it won't wait for the actual result from database, this method will return a wrapper, and that wrapper will have a reference to result, basically a technique for designing non blocking apps
   // ignore for now
   def index = Action.async { implicit request =>
-    scrapManager.get(0, 10).map(x=>
-      Ok(views.html.index(x, scrapManager.getCounter))
-    )
+    scrapManager.countArticles flatMap  (count =>  scrapManager.get(0, 10).map(latest=>
+      Ok(views.html.index(latest, count, scrapManager.getCounter))
+    ))
   }
 
 

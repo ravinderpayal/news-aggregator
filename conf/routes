@@ -6,7 +6,7 @@
 # An example controller showing a sample home page
 GET     /                           v1.enterurl.EnterUrlController.index
 GET     /news/:id                           v1.enterurl.EnterUrlController.get(id: Int)
-GET     /e/:url/:password                           v1.enterurl.EnterUrlController.enter(url, password)
+GET     /e/                           v1.enterurl.EnterUrlController.enter(url: String)
 
 
 

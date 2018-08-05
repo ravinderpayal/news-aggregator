@@ -17,10 +17,10 @@ class ScrapManager @Inject()(dataStore: DataStore, scrapper: Scrapper)(implicit 
 
   def onScrapped(scrapped: ScrappedArticle): Unit = {
     // println("Scrapped is called")
-    dataStore.upsert(domainName = scrapped.domainName, sourceUrl = scrapped.pageLink, sourceLogo = scrapped.favicon, imgLink = scrapped.image._1, imgAlt = scrapped.image._2, title = scrapped.title, excerpt = scrapped.excerpt, article = scrapped.article, createdAt = scrapped.createdAt).map(f=> println(f))
+    dataStore.upsert(domainName = scrapped.domainName, sourceUrl = scrapped.pageLink, sourceLogo = scrapped.favicon, imgLink = scrapped.image._1, imgAlt = scrapped.image._2, title = scrapped.title, excerpt = scrapped.excerpt, article = scrapped.article, createdAt = scrapped.createdAt) // .map(f=> println(f))
   }
   def shouldICrawl(url: String): Future[Boolean] = {
-    dataStore.get(url, new Date().getTime - 43200000).map(_.nonEmpty)
+    dataStore.get(url, new Date().getTime - 43200000).map(_==0)
   }
 
   def get(id: Int) = {
@@ -32,7 +32,7 @@ class ScrapManager @Inject()(dataStore: DataStore, scrapper: Scrapper)(implicit 
   }*/
 
   // from here we will be getting links to be shown in table
-  def get(skipN: Int, pageSize: Int) = {
+  def get(skipN: Int, pageSize: Int):Future[Seq[(Int, String, String, String, String, String, String)]] = {
     dataStore.get(skipN, pageSize)
   }
 
@@ -82,11 +82,14 @@ class ScrapManagerActor(scrapManager: ScrapManager, superVisor: CrawlerSuperviso
       //if (!localMutableArray.contains(url)) {
       //  localMutableArray.+=(url)
         scrapManager.shouldICrawl(url).onComplete {
-          case Success(s) if(!s)=> superVisor.scrapperActor ! NewUrl(url)
+          case Success(s) if s => superVisor.scrapperActor ! NewUrl(url)
           case Failure(a) =>
             println(a)
-            println(url + "is already crawled")
-          case x => println(x)
+            println(url + "problem checking this URL")
+            //superVisor.scrapManagerActor ! NewUrl(url)
+          case x =>
+            println(x)
+            println(url + " can't bne crawled")
         }
       //}
     case _ => superVisor.supervisorActor ! a // TODO: wrap it into unsupported

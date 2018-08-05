@@ -46,22 +46,23 @@ class DataStore {
       c <- Article.article if c.id === id
     } yield (c.id, c.imgALT, c.imgUrl, c.title, c.article)
 
-    db.run(q.result).map(a => a)
+    db.run(q.result)
   }
 
   def get(link: String, lastCrawl: Long) = {
-    db.run(Article.article.filter(f => f.sourceUrl === link && f.createdAt > lastCrawl).map(f => f.sourceUrl).result)
+    db.run(Article.article.filter(f => f.sourceUrl === link && f.createdAt > lastCrawl).map(f => f.sourceUrl).length.result)
   }
 
   def countArticles = {
     db.run(Article.article.length.result)
   }
 
-  def get(skipN: Int, pageSize: Int) = {
+  def get(skipN: Int, pageSize: Int):Future[Seq[(Int, String, String, String, String, String, String)]] = {
     val q = for {
       c <- Article.article
-    } yield (c.id, c.imgALT, c.imgUrl, c.title, c.excerpt)
-    db.run(q.result)
+    } yield (c.id, c.sourceDomainName, c.sourceLogo, c.imgALT, c.imgUrl, c.title, c.excerpt)
+
+    db.run(q.sortBy(_._1.desc).drop(skipN).take(pageSize).result)
   }
 }
 

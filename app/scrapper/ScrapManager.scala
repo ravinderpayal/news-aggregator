@@ -86,7 +86,7 @@ class ScrapManagerActor(scrapManager: ScrapManager, superVisor: CrawlerSuperviso
           host.apexDomain match {
             case Some(domain) =>
               scrapManager.shouldICrawl(url).onComplete {
-                case Success(s) if s => superVisor.scrapperActor ! NewUrl(url)
+                case Success(s) if s => superVisor.scrapperActor ! (domain, NewUrl(url))
                 case Failure(a) =>
                   println(a)
                   println(url + "problem checking this URL")

@@ -69,7 +69,7 @@ object ScrapperActor {
 
 class ScrapperActor (scrapper: Scrapper, crawlerSupervisor: CrawlerSupervisor) (implicit ec: ExecutionContext) extends Actor {
   def receive = {
-    case NewUrl(url) =>
+    case (domain:String, NewUrl(url)) =>
       scrapper.scrap(domain, url) map {
         case Some(scrapped) =>
             onScrapped(scrapped, url)

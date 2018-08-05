@@ -75,22 +75,22 @@ object ScrapManagerActor {
 
 class ScrapManagerActor(scrapManager: ScrapManager, superVisor: CrawlerSupervisor)(implicit executionContext: ExecutionContext) extends Actor {
   val localMutableArray = mutable.MutableList()
-  val allowedDomains = List('cointelegraph.com/tags/cryptocurrencies','in.investing.com/news/cryptocurrency-news
-','cnbc.com/2018/08/04/brian-kelly-bitcoin-could-come-to-your-401k-with-starbucks-bakkt.html
-','economictimes.indiatimes.com/topic/Indian-cryptocurrency/news
-','cryptonews.com/
-','coindesk.com/
-','cryptocurrencynews.com/
-','inc42.com/buzz/cryptocurrency-this-week-indias-interdisciplinary-committee-is-yet-to-finalise-its-cryptocurrency-report/
-','moneycontrol.com/news/tags/cryptocurrency.html
-','seekingalpha.com/market-news/crypto
-','seekingalpha.com/article/4194879-bitcoin-pricing-models-part-iii
-','fxstreet.com/cryptocurrencies/news
-','forbes.com/forbes/welcome/?toURL=https://www.forbes.com/sites/caitlinlong/2018/08/03/ice-creating-new-cryptocurrency-market-a-double-edged-sword/&refURL=https://www.google.co.in/&referrer=https://www.google.co.in/
-','finder.com/cryptocurrency-news
-','twitter.com/cryptoboomnews?lang=en
-','news18.com/newstopics/cryptocurrency.html
-','markets.businessinsider.com/cryptocurrencies','investors.com/news/blockchain-bitcoin-cryptocurrency-news-trends/','entrepreneur.com/topic/cryptocurrency','worldcoinindex.com/news')
+  val allowedDomains = List("cointelegraph.com/tags/cryptocurrencies","in.investing.com/news/cryptocurrency-news
+","cnbc.com/2018/08/04/brian-kelly-bitcoin-could-come-to-your-401k-with-starbucks-bakkt.html
+","economictimes.indiatimes.com/topic/Indian-cryptocurrency/news
+","cryptonews.com/
+","coindesk.com/
+","cryptocurrencynews.com/
+","inc42.com/buzz/cryptocurrency-this-week-indias-interdisciplinary-committee-is-yet-to-finalise-its-cryptocurrency-report/
+","moneycontrol.com/news/tags/cryptocurrency.html
+","seekingalpha.com/market-news/crypto
+","seekingalpha.com/article/4194879-bitcoin-pricing-models-part-iii
+","fxstreet.com/cryptocurrencies/news
+","forbes.com/forbes/welcome/?toURL=https://www.forbes.com/sites/caitlinlong/2018/08/03/ice-creating-new-cryptocurrency-market-a-double-edged-sword/&refURL=https://www.google.co.in/&referrer=https://www.google.co.in/
+","finder.com/cryptocurrency-news
+","twitter.com/cryptoboomnews?lang=en
+","news18.com/newstopics/cryptocurrency.html
+","markets.businessinsider.com/cryptocurrencies","investors.com/news/blockchain-bitcoin-cryptocurrency-news-trends/","entrepreneur.com/topic/cryptocurrency","worldcoinindex.com/news")
   def receive = (a: Any) => a match {
     case b:ScrappedArticle =>
       scrapManager.onScrapped(b)

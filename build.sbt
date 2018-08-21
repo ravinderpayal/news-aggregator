@@ -1,4 +1,4 @@
-name := "Titanicturer"
+name := "crawler"
  
 version := "1.0" 
       

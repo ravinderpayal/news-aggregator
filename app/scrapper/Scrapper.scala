@@ -3,6 +3,7 @@ package scrapper
 import java.util.Date
 
 import akka.actor.{Actor, ActorRef, Props}
+import akka.routing.RoundRobinPool
 import com.github.ghostdogpr.readability4s.Readability
 import javax.inject.{Inject, Singleton}
 import org.jsoup.Jsoup

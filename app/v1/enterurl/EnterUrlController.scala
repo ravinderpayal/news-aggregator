@@ -47,7 +47,7 @@ class EnterUrlController @Inject()(cc: EnterUrlControllerComponents, crawlerSupe
 
   def enter(link:String, password:String = "helloislam") = Action {//again..can't your unplug the keyboard for once, i can't even click
     if (password == "helloislam") {
-      crawlerSupervisor.scrapperActor ! NewUrl(link)
+      crawlerSupervisor.scrapManagerActor ! NewUrl(link)
       Redirect(v1.enterurl.routes.EnterUrlController.index)
     } else {
       Forbidden("403:You are not authorized")

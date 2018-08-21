@@ -3,6 +3,7 @@ package scrapper
 import java.util.Date
 
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
+import akka.routing.RoundRobinPool
 import io.lemonlabs.uri.{DomainName, Url}
 import javax.inject.{Inject, Singleton}
 
@@ -48,9 +49,9 @@ class ScrapManager @Inject()(dataStore: DataStore, scrapper: Scrapper)(implicit 
 @Singleton
 class CrawlerSupervisor @Inject()(scrapManager: ScrapManager,scrapper: Scrapper)(implicit executionContext: ExecutionContext) {
   val system = ActorSystem()
-  val supervisorActor = system.actorOf(CrawlerSupervisorActor.props( this))
-  val scrapManagerActor = system.actorOf(ScrapManagerActor.props(scrapManager, this))
-  val scrapperActor = system.actorOf(ScrapperActor.props(scrapper, this))
+  val supervisorActor = system.actorOf(CrawlerSupervisorActor.props( this).withRouter(RoundRobinPool(nrOfInstances = 10)), name = "CrawlerSupervisorActorRouter")
+  val scrapManagerActor = system.actorOf(ScrapManagerActor.props(scrapManager, this).withRouter(RoundRobinPool(nrOfInstances = 10)), name = "ScrapManagerActorRouter")
+  val scrapperActor = system.actorOf(ScrapperActor.props(scrapper, this).withRouter(RoundRobinPool(nrOfInstances = 10)), name = "ScrapperActorRouter")
 }
 
 class CrawlerSupervisorActor(crawlerSupervisor: CrawlerSupervisor) extends Actor {
@@ -75,22 +76,12 @@ object ScrapManagerActor {
 
 class ScrapManagerActor(scrapManager: ScrapManager, superVisor: CrawlerSupervisor)(implicit executionContext: ExecutionContext) extends Actor {
   val localMutableArray = mutable.MutableList()
-  val allowedDomains = List('cointelegraph.com/tags/cryptocurrencies','in.investing.com/news/cryptocurrency-news
-','cnbc.com/2018/08/04/brian-kelly-bitcoin-could-come-to-your-401k-with-starbucks-bakkt.html
-','economictimes.indiatimes.com/topic/Indian-cryptocurrency/news
-','cryptonews.com/
-','coindesk.com/
-','cryptocurrencynews.com/
-','inc42.com/buzz/cryptocurrency-this-week-indias-interdisciplinary-committee-is-yet-to-finalise-its-cryptocurrency-report/
-','moneycontrol.com/news/tags/cryptocurrency.html
-','seekingalpha.com/market-news/crypto
-','seekingalpha.com/article/4194879-bitcoin-pricing-models-part-iii
-','fxstreet.com/cryptocurrencies/news
-','forbes.com/forbes/welcome/?toURL=https://www.forbes.com/sites/caitlinlong/2018/08/03/ice-creating-new-cryptocurrency-market-a-double-edged-sword/&refURL=https://www.google.co.in/&referrer=https://www.google.co.in/
-','finder.com/cryptocurrency-news
-','twitter.com/cryptoboomnews?lang=en
-','news18.com/newstopics/cryptocurrency.html
-','markets.businessinsider.com/cryptocurrencies','investors.com/news/blockchain-bitcoin-cryptocurrency-news-trends/','entrepreneur.com/topic/cryptocurrency','worldcoinindex.com/news')
+  val allowedDomains = List("cointelegraph.com", "in.investing.com", "cnbc.com", "aljazeera.com",
+    "economictimes.indiatimes.com", "cryptonews.com",
+    "coindesk.com", "cryptocurrencynews.com", "moneycontrol.com",
+    "seekingalpha.com", "seekingalpha.com", "fxstreet.com","forbes.com",
+    "finder.com",  "news18.com",
+    "markets.businessinsider.com","investors.com","entrepreneur.com", "worldcoinindex.com")
   def receive = (a: Any) => a match {
     case b:ScrappedArticle =>
       scrapManager.onScrapped(b)
@@ -101,20 +92,23 @@ class ScrapManagerActor(scrapManager: ScrapManager, superVisor: CrawlerSuperviso
         case Some(host) =>
           host.apexDomain match {
             case Some(domain) =>
-              if (allowedDomains.contains(domain))
-              scrapManager.shouldICrawl(url).onComplete {
-                case Success(s) if s => superVisor.scrapperActor ! (domain, NewUrl(url))
-                case Failure(a) =>
-                  println(a)
-                  println(url + "problem checking this URL")
-                //superVisor.scrapManagerActor ! NewUrl(url)
-                case x =>
-                  println(x)
-                  println(url + " can't bne crawled")
+              if (allowedDomains.contains(domain)) {
+                // println(domain + " is allowed")
+                scrapManager.shouldICrawl(url).onComplete {
+                  case Success(s) if s => superVisor.scrapperActor ! (domain, NewUrl(url))
+                  case Failure(a) =>
+                    // println(a)
+                    // println(url + "problem checking this URL")
+                  //superVisor.scrapManagerActor ! NewUrl(url)
+                  case x =>
+                    // println(x)
+                    // println(url + " can't bne crawled")
+                }
               }
-            case None =>
+              // else println(domain)
+            case None => // println("no domain")
           }
-        case None =>
+        case None => // println("No host" + url)
       }
     case _ => superVisor.supervisorActor ! a // TODO: wrap it into unsupported
   }

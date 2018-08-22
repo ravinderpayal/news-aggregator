@@ -20,7 +20,7 @@ class Scrapper @Inject()(ws:WSClient)(implicit ec: ExecutionContext) {
   def scrap(domain: String, link: String):Future[Option[(Option[ScrappedArticle], List[String])]] = {
     counter+=1
     ws.url(link).get().map(result => {
-      if (result.status == 200 && result.contentType.equals("text/html")) {
+      if (result.status == 200 && result.contentType.contains("text/html")) {
         try {
 
           val document = Jsoup.parse(result.body)
@@ -30,9 +30,6 @@ class Scrapper @Inject()(ws:WSClient)(implicit ec: ExecutionContext) {
           val parsed = Readability(link, result.body).parse()
           parsed match {
             case Some(article) =>
-              // println("/**\n\n\n")
-              // println(article.content)
-              // println("\n\n\n\n*/")
               Some(value = (Some(ScrappedArticle(domainName = domain, pageLink = link, favicon = article.faviconUrl, image = (article.imageUrl, ""), title = article.title, excerpt = article.excerpt, article = article.content, createdAt = new Date().getTime)), all_links.toList))
             case None =>
               Some(value = (None, all_links.toList))
@@ -59,7 +56,10 @@ class Scrapper @Inject()(ws:WSClient)(implicit ec: ExecutionContext) {
             counter -= 1
             None
         }
-      } else None
+      } else {
+        println(result.contentType)
+        None
+      }
       })
   }
 }
@@ -74,7 +74,7 @@ class ScrapperActor (scrapper: Scrapper, crawlerSupervisor: CrawlerSupervisor) (
       scrapper.scrap(domain, url) map {
         case Some(scrapped) =>
             onScrapped(scrapped, url)
-        case None => // println("Bad luck...found nothing")
+        case None => println("Bad luck...found nothing for given URL: " + url)
       }
   }
 

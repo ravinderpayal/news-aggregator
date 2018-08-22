@@ -76,11 +76,10 @@ object ScrapManagerActor {
 
 class ScrapManagerActor(scrapManager: ScrapManager, superVisor: CrawlerSupervisor)(implicit executionContext: ExecutionContext) extends Actor {
   val localMutableArray = mutable.MutableList()
-  val allowedDomains = List("cointelegraph.com", "in.investing.com", "cnbc.com", "aljazeera.com",
+  val allowedDomains = List("cointelegraph.com", "wikipedia.org", "investing.com", "cnbc.com", "aljazeera.com",
     "economictimes.indiatimes.com", "cryptonews.com",
     "coindesk.com", "cryptocurrencynews.com", "moneycontrol.com",
-    "seekingalpha.com", "seekingalpha.com", "fxstreet.com","forbes.com",
-    "finder.com",  "news18.com",
+    "seekingalpha.com", "seekingalpha.com", "fxstreet.com","forbes.com", "news18.com",
     "markets.businessinsider.com","investors.com","entrepreneur.com", "worldcoinindex.com")
   def receive = (a: Any) => a match {
     case b:ScrappedArticle =>

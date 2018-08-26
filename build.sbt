@@ -21,10 +21,6 @@ libraryDependencies += "io.lemonlabs" %% "scala-uri" % "1.1.4"
 
 libraryDependencies += "net.logstash.logback" % "logstash-logback-encoder" % "4.11"
 
-val reactiveMongoVer = "0.12.6-play26"
-libraryDependencies ++= Seq(
-  "org.reactivemongo" %% "play2-reactivemongo" % reactiveMongoVer
-)
 
 
 libraryDependencies ++= Seq(

@@ -81,6 +81,7 @@ class ScrapManagerActor(scrapManager: ScrapManager, superVisor: CrawlerSuperviso
     "coindesk.com", "cryptocurrencynews.com", "moneycontrol.com",
     "seekingalpha.com", "seekingalpha.com", "fxstreet.com","forbes.com", "news18.com",
     "markets.businessinsider.com","investors.com","entrepreneur.com", "worldcoinindex.com")
+
   def receive = (a: Any) => a match {
     case b:ScrappedArticle =>
       scrapManager.onScrapped(b)
